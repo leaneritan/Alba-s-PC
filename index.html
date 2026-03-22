@@ -170,11 +170,12 @@
     .unit-label { font-size:0.8rem; font-weight:700; color:var(--secondary); letter-spacing:1px; }
     .slide-counter { font-size:0.8rem; font-weight:700; background:#eee; padding:4px 12px; border-radius:100px; }
 
-    .slide-main {
+.slide-main {
     flex: 1;
     display: flex;
     min-height: 0;
-    height: 0;
+    overflow: hidden;
+    height: calc(100vh - 56px - 160px - 64px);
 }
 
     .slide-left {
@@ -185,20 +186,19 @@
         flex-shrink: 0;
     }
 
-    .slide-right {
+.slide-right {
     width: 40%;
     background: #1E3A5F;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 24px;
+    padding: 32px 24px;
     border-left: 1px solid #eee;
+    overflow: hidden;
     color: white;
     flex-shrink: 0;
-    position: relative;
-    overflow: hidden;
-    min-height: 300px;
+    height: 100%;
 }
 
     .slide-title { font-size:2rem; font-weight:800; color:var(--primary); margin-bottom:8px; line-height:1.3; }
