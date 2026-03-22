@@ -344,19 +344,26 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
-        padding: 48px;
+        justify-content: flex-start;
+        padding: 48px 24px;
         border-left: 1px solid #eee;
         position: relative;
+        overflow-y: auto;
         color: white;
     }
     .slide-title { font-size: 2.2rem; font-weight: 800; color: var(--primary); margin-bottom: 8px; }
     .slide-subtitle { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 32px; }
+    .visual-emoji {
+        font-size: clamp(60px, 15vh, 100px);
+        margin-bottom: 20px;
+        word-break: break-word;
+        text-align: center;
+        width: 100%;
+    }
     .slide-content { line-height: 1.8; font-size: 1.1rem; }
-    .visual-emoji { font-size: 100px; margin-bottom: 20px; }
     .visual-caption { margin-top: 24px; font-size: 14px; color: white; text-align: center; font-weight: 500; }
 
-    .quiz-strip { height: 220px; background: var(--teal-quiz); padding: 0 48px; display: flex; align-items: center; gap: 24px; border-top: 1px solid rgba(0, 0, 0, 0.05); position: relative; }
+        .quiz-strip { height: 220px; background: var(--teal-quiz); padding: 0 48px; display: flex; align-items: center; gap: 24px; border-top: 1px solid rgba(0, 0, 0, 0.05); position: relative; }
     .quiz-intro { display: flex; align-items: center; gap: 12px; min-width: 180px; }
     .quiz-icon { color: var(--primary); font-size: 1.8rem; }
     .quiz-labels h4 { font-weight: 800; color: var(--primary); }
@@ -375,8 +382,32 @@
         cursor: pointer;
     }
     .quiz-opt:hover { border-color: var(--secondary); }
-    .quiz-opt.correct { background: #4ADE80 !important; color: white; border-color: #4ADE80; }
-    .quiz-opt.wrong { background: #F87171 !important; color: white; border-color: #F87171; animation: shake 0.4s ease-in-out; }
+
+    .quiz-strip.collapsed {
+        height: 60px;
+        cursor: pointer;
+    }
+    .quiz-strip.collapsed .quiz-body,
+    .quiz-strip.collapsed .skip-link,
+    .quiz-strip.collapsed .quiz-feedback {
+        display: none;
+    }
+    .quiz-toggle {
+        position: absolute;
+        top: 15px;
+        right: 48px;
+        width: 30px;
+        height: 30px;
+        background: white;
+        border: 1px solid var(--primary);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 10;
+        color: var(--primary);
+    }
     .quiz-feedback { margin-left: 16px; font-weight: 800; font-size: 1.2rem; min-width: 150px; }
 
     .skip-link {
@@ -534,7 +565,10 @@
                     <p class="visual-caption" id="current-slide-caption"></p>
                 </div>
             </div>
-            <div class="quiz-strip" id="quiz-strip">
+                        <div class="quiz-strip" id="quiz-strip" onclick="if(this.classList.contains('collapsed')) toggleQuiz()">
+                <button class="quiz-toggle" onclick="event.stopPropagation(); toggleQuiz()">
+                    <span class="material-symbols-outlined" id="quiz-toggle-icon">expand_more</span>
+                </button>
                 <div class="quiz-intro">
                     <span class="material-symbols-outlined quiz-icon">quiz</span>
                     <div class="quiz-labels"><h4>確認クイズ</h4><span>Review Quiz</span></div>
@@ -798,7 +832,8 @@
             skippedSlides: [],
             quizStatus: {}, // slideIdx: { qIdx: true/false }
             view: 'dashboard',
-            sidebarCollapsed: localStorage.getItem('alba-sidebar') === 'true'
+            sidebarCollapsed: localStorage.getItem('alba-sidebar') === 'true',
+            quizCollapsed: localStorage.getItem("alba-quiz-collapsed") === "true"
         };
 
         function saveProgress() {
@@ -825,6 +860,21 @@
             } else {
                 const icon = document.getElementById('toggle-icon');
                 if (icon) icon.innerText = '←';
+            }
+
+            const quizSaved = localStorage.getItem("alba-quiz-collapsed");
+            if (quizSaved !== null) {
+                state.quizCollapsed = quizSaved === "true";
+            }
+
+            const quizStrip = document.getElementById("quiz-strip");
+            const quizIcon = document.getElementById("quiz-toggle-icon");
+            if (state.quizCollapsed) {
+                quizStrip.classList.add("collapsed");
+                if (quizIcon) quizIcon.innerText = "expand_less";
+            } else {
+                quizStrip.classList.remove("collapsed");
+                if (quizIcon) quizIcon.innerText = "expand_more";
             }
 
             if (state.view === 'dashboard') showDashboard();
@@ -854,6 +904,21 @@
             }
             localStorage.setItem('alba-sidebar', state.sidebarCollapsed);
         }
+        function toggleQuiz() {
+            state.quizCollapsed = !state.quizCollapsed;
+            const quizStrip = document.getElementById("quiz-strip");
+            const icon = document.getElementById("quiz-toggle-icon");
+
+            if (state.quizCollapsed) {
+                quizStrip.classList.add("collapsed");
+                if (icon) icon.innerText = "expand_less";
+            } else {
+                quizStrip.classList.remove("collapsed");
+                if (icon) icon.innerText = "expand_more";
+            }
+            localStorage.setItem("alba-quiz-collapsed", state.quizCollapsed);
+        }
+
 
         function confirmReset() {
             if (confirm("本当にリセットしますか？すべての進捗が消えます。")) {
@@ -1016,6 +1081,11 @@
             feedback.innerHTML = '';
 
             if (slide.quiz) {
+            if (state.quizCollapsed) {
+                quizStrip.classList.add("collapsed");
+            } else {
+                quizStrip.classList.remove("collapsed");
+            }
                 quizStrip.classList.remove('hidden');
                 if (!state.quizStatus[index]) state.quizStatus[index] = {};
 
