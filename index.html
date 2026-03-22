@@ -22,30 +22,19 @@
         --sidebar-width: 280px;
         --sidebar-collapsed-width: 52px;
     }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif; }
+    html, body { height: 100%; overflow: hidden; }
+    body { background-color: var(--surface); color: var(--text-main); display: flex; }
 
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: 'Plus Jakarta Sans', "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
-    }
-
-    body {
-        background-color: var(--surface);
-        color: var(--text-main);
-        overflow-x: hidden;
-        display: flex;
-    }
-
-    /* Laser Pointer Cursor for Main Content */
     #main-content {
         margin-left: var(--sidebar-width);
         flex: 1;
-        min-height: 100vh;
+        height: 100vh;
         display: flex;
         flex-direction: column;
         transition: margin-left 0.3s ease;
         cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6' fill='%23FF0000' opacity='0.9'/%3E%3Ccircle cx='8' cy='8' r='3' fill='%23FF6666'/%3E%3C/svg%3E") 8 8, crosshair;
+        overflow: hidden;
     }
 
     #sidebar {
@@ -54,165 +43,54 @@
         background-color: var(--primary);
         color: var(--white);
         position: fixed;
-        left: 0;
-        top: 0;
+        left: 0; top: 0;
         display: flex;
         flex-direction: column;
         z-index: 100;
         transition: width 0.3s ease;
         cursor: auto;
     }
+    #sidebar.collapsed { width: var(--sidebar-collapsed-width); }
+    #sidebar.collapsed ~ #main-content { margin-left: var(--sidebar-collapsed-width); }
 
-    #sidebar.collapsed {
-        width: var(--sidebar-collapsed-width);
-    }
-
-    #sidebar.collapsed ~ #main-content {
-        margin-left: var(--sidebar-collapsed-width);
-    }
-
-    .sidebar-header {
-        padding: 32px 24px;
-        position: relative;
-        overflow: hidden;
-        white-space: nowrap;
-    }
-
-
+    .sidebar-header { padding: 32px 24px; position: relative; overflow: hidden; white-space: nowrap; }
     .sidebar-toggle {
-        position: absolute;
-        top: 15px;
-        right: 12px;
-        width: 28px;
-        height: 28px;
-        background: white;
-        border: 2px solid var(--primary);
-        border-radius: 50%;
-        color: var(--primary);
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 101;
-        font-weight: bold;
-        transition: all 0.3s ease;
-        padding: 0;
-    }
-    #sidebar.collapsed .sidebar-toggle {
-        right: 12px;
+        position: absolute; top: 15px; right: 12px;
+        width: 28px; height: 28px;
+        background: white; border: 2px solid var(--primary); border-radius: 50%;
+        color: var(--primary); cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        z-index: 101; font-weight: bold; transition: all 0.3s ease; padding: 0;
     }
 
-    /* Sidebar Home Button Styles */
-    .home-link {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 12px 24px;
-        color: var(--white);
-        text-decoration: none;
-        opacity: 0.8;
-        transition: all 0.2s;
-        border-left: 4px solid transparent;
-        margin-bottom: 8px;
-        cursor: pointer;
-    }
+    .home-link { display: flex; align-items: center; gap: 12px; padding: 12px 24px; color: var(--white); text-decoration: none; opacity: 0.8; transition: all 0.2s; border-left: 4px solid transparent; margin-bottom: 8px; cursor: pointer; }
     .home-link:hover { opacity: 1; background: rgba(255,255,255,0.1); }
-    .home-link.active {
-        opacity: 1;
-        background: rgba(255,255,255,0.1);
-        border-left-color: #3B82F6;
-    }
+    .home-link.active { opacity: 1; background: rgba(255,255,255,0.1); border-left-color: #3B82F6; }
     .home-info { display: flex; flex-direction: column; }
     .home-title { font-weight: 600; font-size: 1rem; }
     .home-subtitle { font-size: 0.7rem; opacity: 0.7; }
-
     #sidebar.collapsed .home-info { display: none; }
     #sidebar.collapsed .home-link { justify-content: center; padding: 12px 0; border-left-width: 0; }
-    #sidebar.collapsed .home-link.active { border-left: none; background: rgba(255,255,255,0.2); }
 
-    /* Top Bar Home Button */
-    .top-bar-home {
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 4px;
-        border-radius: 4px;
-        transition: background 0.2s;
-        position: relative;
-        margin-right: 8px;
-        color: var(--primary);
-    }
+    .top-bar-home { cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 4px; border-radius: 4px; transition: background 0.2s; position: relative; margin-right: 8px; color: var(--primary); font-size: 1.4rem; }
     .top-bar-home:hover { background: rgba(0,0,0,0.05); }
-    .top-bar-home::after {
-        content: "ホームに戻る / Go Home";
-        position: absolute;
-        top: 100%;
-        left: 0;
-        background: #333;
-        color: white;
-        padding: 4px 8px;
-        border-radius: 4px;
-        font-size: 0.7rem;
-        white-space: nowrap;
-        visibility: hidden;
-        opacity: 0;
-        transition: opacity 0.2s;
-        z-index: 100;
-        font-family: "Plus Jakarta Sans", sans-serif;
-    }
-    .top-bar-home:hover::after { visibility: visible; opacity: 1; }
 
-    /* Animations */
-    @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        25% { transform: translateX(-5px); }
-        75% { transform: translateX(5px); }
-    }
+    @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
     .shake { animation: shake 0.2s ease-in-out 0s 2; }
-
     .fade-out { opacity: 0; transition: opacity 0.5s ease; }
     .fade-in { opacity: 1; transition: opacity 0.5s ease; }
+    @keyframes pulse-blue { 0%{box-shadow:0 0 0 0 rgba(59,130,246,0.7)} 70%{box-shadow:0 0 0 10px rgba(59,130,246,0)} 100%{box-shadow:0 0 0 0 rgba(59,130,246,0)} }
+    .pulse-blue { animation: pulse-blue 2s infinite; background-color: #3B82F6 !important; color: white !important; }
 
-    @keyframes pulse-blue {
-        0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
-        70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
-    }
-    .pulse-blue {
-        animation: pulse-blue 2s infinite;
-        background-color: #3B82F6 !important;
-        color: white !important;
-    }
-
-    /* Modal Styles */
-    .modal-overlay {
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.5);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-    }
-    .modal-content {
-        background: white;
-        padding: 32px;
-        border-radius: 16px;
-        max-width: 400px;
-        width: 90%;
-        text-align: center;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        color: #333;
-    }
-    .modal-btns { display: flex; gap: 12px; margin-top: 24px; justify-content: center; }
-    .btn-modal { padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; border: none; font-family: inherit; }
-    .btn-home-confirm { background: #3B82F6; color: white; }
-    .btn-continue-modal { background: #E5E7EB; color: #374151; }
+    .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:none; align-items:center; justify-content:center; z-index:1000; }
+    .modal-content { background:white; padding:32px; border-radius:16px; max-width:400px; width:90%; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.1); color:#333; }
+    .modal-btns { display:flex; gap:12px; margin-top:24px; justify-content:center; }
+    .btn-modal { padding:10px 20px; border-radius:8px; font-weight:600; cursor:pointer; border:none; font-family:inherit; }
+    .btn-home-confirm { background:#3B82F6; color:white; }
+    .btn-continue-modal { background:#E5E7EB; color:#374151; }
 
     .quiz-opt.correct { background-color: #10B981 !important; color: white !important; }
     .quiz-opt.wrong { background-color: #EF4444 !important; color: white !important; }
-
 
     #sidebar.collapsed .logo-en,
     #sidebar.collapsed .logo-jp,
@@ -221,9 +99,7 @@
     #sidebar.collapsed .category-lessons,
     #sidebar.collapsed .progress-label,
     #sidebar.collapsed .progress-bar-bg,
-    #sidebar.collapsed .reset-btn-text {
-        display: none;
-    }
+    #sidebar.collapsed .reset-btn-text { display: none; }
 
     #sidebar.collapsed .sidebar-header { padding: 32px 10px; }
     #sidebar.collapsed .sidebar-nav { padding: 0 6px; }
@@ -235,109 +111,80 @@
 
     .sidebar-nav { flex: 1; overflow-y: auto; padding: 0 12px; }
     .category-item { margin-bottom: 8px; }
-    .category-header {
-        width: 100%;
-        padding: 12px;
+    .category-header { width:100%; padding:12px; display:flex; align-items:center; background:none; border:none; color:inherit; border-radius:8px; transition:background 0.2s; cursor:pointer; }
+    .category-header:hover { background: rgba(255,255,255,0.05); }
+    .category-info { flex:1; text-align:left; margin-left:12px; }
+    .cat-title { font-weight:700; font-size:0.9rem; display:block; }
+    .cat-subtitle { font-size:0.7rem; opacity:0.7; }
+    .chevron { transition:transform 0.2s; font-size:1.2rem; }
+    .category-lessons { margin-top:4px; padding-left:40px; display:none; }
+    .category-item.open .category-lessons { display:block; }
+    .category-item.open .chevron { transform:rotate(180deg); }
+
+    .lesson-link { display:flex; align-items:center; padding:8px 0; font-size:0.85rem; color:rgba(255,255,255,0.7); text-decoration:none; transition:color 0.2s; cursor:pointer; }
+    .lesson-link:hover { color:var(--white); }
+    .lesson-link.active { color:var(--white); border-left:3px solid var(--secondary); padding-left:8px; margin-left:-11px; }
+    .status-icon { margin-right:8px; font-size:1rem; }
+    .status-locked { color:#888; }
+    .status-check { color:#4ADE80; }
+    .status-skipped { color:#FACC15; }
+
+    .sidebar-footer { padding:24px; border-top:1px solid rgba(255,255,255,0.1); }
+    .progress-label { font-size:0.75rem; font-weight:600; margin-bottom:8px; display:block; }
+    .progress-bar-bg { width:100%; height:6px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden; }
+    .progress-bar-fill { height:100%; background:var(--secondary); transition:width 0.5s ease; }
+    .reset-progress-btn { background:transparent; border:1px solid #EF4444; color:#EF4444; font-size:0.7rem; padding:4px 8px; border-radius:4px; cursor:pointer; margin-top:12px; width:100%; text-align:center; }
+    .reset-progress-btn:hover { background:rgba(239,68,68,0.1); }
+
+    #dashboard { padding:48px; max-width:1200px; margin:0 auto; width:100%; overflow-y:auto; height:100%; }
+    .welcome-header { margin-bottom:32px; }
+    .welcome-header h1 { font-size:2.5rem; font-weight:800; color:var(--primary); }
+    .welcome-header p { font-size:1.1rem; color:var(--text-muted); margin-top:8px; }
+
+    .continue-card { background:var(--white); border-radius:24px; padding:32px; display:flex; justify-content:space-between; align-items:center; margin-bottom:48px; box-shadow:0 4px 20px rgba(0,0,0,0.05); }
+    .continue-info h2 { font-size:1.5rem; font-weight:700; margin-bottom:12px; }
+    .btn-continue { background:var(--secondary); color:var(--white); border:none; padding:16px 32px; border-radius:12px; font-weight:700; font-size:1.1rem; display:flex; align-items:center; gap:8px; transition:transform 0.2s; cursor:pointer; }
+    .btn-continue:hover { transform:translateY(-2px); }
+
+    .category-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:24px; }
+    .cat-card { background:var(--white); border-radius:20px; padding:24px; box-shadow:0 4px 15px rgba(0,0,0,0.03); display:flex; flex-direction:column; transition:transform 0.2s,box-shadow 0.2s; cursor:pointer; }
+    .cat-card:hover { transform:translateY(-4px); box-shadow:0 8px 25px rgba(0,0,0,0.08); }
+    .cat-card.locked { opacity:0.7; }
+    .cat-card-header { display:flex; align-items:flex-start; margin-bottom:16px; }
+    .cat-card-icon { font-size:2.5rem; margin-right:16px; }
+    .cat-card-titles { flex:1; }
+    .cat-card-title { font-weight:800; font-size:1.2rem; display:block; color:var(--primary); }
+    .cat-card-subtitle { font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; }
+    .cat-card-footer { margin-top:auto; }
+    .cat-stats { display:flex; justify-content:space-between; font-size:0.8rem; font-weight:600; margin-bottom:8px; }
+    .badge-locked { background:#E5E7EB; color:#6B7280; padding:4px 12px; border-radius:100px; font-size:0.7rem; margin-top:8px; display:inline-block; }
+
+    #slide-view {
+        display: none;
+        flex-direction: column;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    .slide-top-bar { padding:16px 48px; display:flex; justify-content:space-between; align-items:center; background:var(--white); border-bottom:1px solid #eee; flex-shrink:0; }
+    .unit-label { font-size:0.8rem; font-weight:700; color:var(--secondary); letter-spacing:1px; }
+    .slide-counter { font-size:0.8rem; font-weight:700; background:#eee; padding:4px 12px; border-radius:100px; }
+
+    .slide-main {
+        flex: 1;
         display: flex;
-        align-items: center;
-        background: none;
-        border: none;
-        color: inherit;
-        border-radius: 8px;
-        transition: background 0.2s;
-        cursor: pointer;
+        min-height: 0;
+        overflow: hidden;
     }
-    .category-header:hover { background: rgba(255, 255, 255, 0.05); }
-    .category-info { flex: 1; text-align: left; margin-left: 12px; }
-    .cat-title { font-weight: 700; font-size: 0.9rem; display: block; }
-    .cat-subtitle { font-size: 0.7rem; opacity: 0.7; }
-    .chevron { transition: transform 0.2s; font-size: 1.2rem; }
 
-    .category-lessons { margin-top: 4px; padding-left: 40px; display: none; }
-    .category-item.open .category-lessons { display: block; }
-    .category-item.open .chevron { transform: rotate(180deg); }
-
-    .lesson-link {
-        display: flex;
-        align-items: center;
-        padding: 8px 0;
-        font-size: 0.85rem;
-        color: rgba(255, 255, 255, 0.7);
-        text-decoration: none;
-        transition: color 0.2s;
-        cursor: pointer;
+    .slide-left {
+        width: 60%;
+        padding: 48px;
+        overflow-y: auto;
+        background: var(--white);
+        flex-shrink: 0;
     }
-    .lesson-link:hover { color: var(--white); }
-    .lesson-link.active { color: var(--white); border-left: 3px solid var(--secondary); padding-left: 8px; margin-left: -11px; }
 
-    .status-icon { margin-right: 8px; font-size: 1rem; }
-    .status-locked { color: #888; }
-    .status-check { color: #4ADE80; }
-    .status-skipped { color: #FACC15; } /* Yellow for skipped */
-
-    .sidebar-footer { padding: 24px; border-top: 1px solid rgba(255, 255, 255, 0.1); }
-    .progress-label { font-size: 0.75rem; font-weight: 600; margin-bottom: 8px; display: block; }
-    .progress-bar-bg { width: 100%; height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 3px; overflow: hidden; }
-    .progress-bar-fill { height: 100%; background: var(--secondary); transition: width 0.5s ease; }
-
-    .reset-progress-btn {
-        background: transparent;
-        border: 1px solid #EF4444;
-        color: #EF4444;
-        font-size: 0.7rem;
-        padding: 4px 8px;
-        border-radius: 4px;
-        cursor: pointer;
-        margin-top: 12px;
-        width: 100%;
-        text-align: center;
-    }
-    .reset-progress-btn:hover { background: rgba(239, 68, 68, 0.1); }
-
-    #dashboard { padding: 48px; max-width: 1200px; margin: 0 auto; width: 100%; }
-    .welcome-header { margin-bottom: 32px; }
-    .welcome-header h1 { font-size: 2.5rem; font-weight: 800; color: var(--primary); }
-    .welcome-header p { font-size: 1.1rem; color: var(--text-muted); margin-top: 8px; }
-
-    .continue-card {
-        background: var(--white); border-radius: 24px; padding: 32px;
-        display: flex; justify-content: space-between; align-items: center;
-        margin-bottom: 48px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    }
-    .continue-info h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 12px; }
-    .btn-continue {
-        background: var(--secondary); color: var(--white); border: none; padding: 16px 32px;
-        border-radius: 12px; font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;
-        transition: transform 0.2s;
-        cursor: pointer;
-    }
-    .btn-continue:hover { transform: translateY(-2px); }
-
-    .category-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
-    .cat-card {
-        background: var(--white); border-radius: 20px; padding: 24px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); display: flex; flex-direction: column;
-        transition: transform 0.2s, box-shadow 0.2s;
-        cursor: pointer;
-    }
-    .cat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08); }
-    .cat-card.locked { opacity: 0.7; }
-    .cat-card-header { display: flex; align-items: flex-start; margin-bottom: 16px; }
-    .cat-card-icon { font-size: 2.5rem; margin-right: 16px; }
-    .cat-card-titles { flex: 1; }
-    .cat-card-title { font-weight: 800; font-size: 1.2rem; display: block; color: var(--primary); }
-    .cat-card-subtitle { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
-    .cat-card-footer { margin-top: auto; }
-    .cat-stats { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600; margin-bottom: 8px; }
-    .badge-locked { background: #E5E7EB; color: #6B7280; padding: 4px 12px; border-radius: 100px; font-size: 0.7rem; margin-top: 8px; display: inline-block; }
-
-    #slide-view { display: none; flex: 1; flex-direction: column; height: 100vh; }
-    .slide-top-bar { padding: 16px 48px; display: flex; justify-content: space-between; align-items: center; background: var(--white); border-bottom: 1px solid #eee; }
-    .unit-label { font-size: 0.8rem; font-weight: 700; color: var(--secondary); letter-spacing: 1px; }
-    .slide-counter { font-size: 0.8rem; font-weight: 700; background: #eee; padding: 4px 12px; border-radius: 100px; }
-
-    .slide-main { flex: 1; display: flex; overflow: hidden; }
-    .slide-left { width: 60%; padding: 64px 48px; overflow-y: auto; background: var(--white); }
     .slide-right {
         width: 40%;
         background: #1E3A5F;
@@ -345,167 +192,101 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: 48px 24px;
+        padding: 32px 24px;
         border-left: 1px solid #eee;
-        position: relative;
-        overflow: visible;
+        overflow: hidden;
         color: white;
+        flex-shrink: 0;
     }
-    .slide-title { font-size: 2.2rem; font-weight: 800; color: var(--primary); margin-bottom: 8px; }
-    .slide-subtitle { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 32px; }
+
+    .slide-title { font-size:2rem; font-weight:800; color:var(--primary); margin-bottom:8px; line-height:1.3; }
+    .slide-subtitle { font-size:0.9rem; color:var(--text-muted); margin-bottom:24px; }
+
     .visual-emoji {
-        font-size: clamp(50px, 8vw, 90px);
-        margin-bottom: 20px;
-        word-break: break-word;
+        font-size: 80px;
+        line-height: 1.3;
         text-align: center;
         width: 100%;
+        display: block;
     }
-    .slide-content { line-height: 1.8; font-size: 1.1rem; }
-    .visual-caption { margin-top: 24px; font-size: 14px; color: white; text-align: center; font-weight: 500; }
 
-        .quiz-strip { height: 220px; background: var(--teal-quiz); padding: 0 48px; display: flex; align-items: center; gap: 24px; border-top: 1px solid rgba(0, 0, 0, 0.05); position: relative; }
-    .quiz-intro { display: flex; align-items: center; gap: 12px; min-width: 180px; }
-    .quiz-icon { color: var(--primary); font-size: 1.8rem; }
-    .quiz-labels h4 { font-weight: 800; color: var(--primary); }
-    .quiz-labels span { font-size: 0.7rem; opacity: 0.6; }
-    .quiz-body { flex: 1; display: flex; flex-direction: column; justify-content: center; overflow: hidden; position: relative; height: 100%; }
-    .quiz-question { font-weight: 700; margin-bottom: 12px; font-size: 1.1rem; }
-    .quiz-options { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
-    .quiz-opt {
-        background: var(--white);
-        border: 1px solid #ddd;
-        padding: 10px 24px;
-        border-radius: 100px;
-        font-weight: 700;
-        font-size: 0.9rem;
-        transition: all 0.2s;
-        cursor: pointer;
-    }
-    .quiz-opt:hover { border-color: var(--secondary); }
+    .slide-content { line-height:1.8; font-size:1rem; }
+    .slide-content ul, .slide-content ol { padding-left:20px; margin-top:8px; }
+    .slide-content li { margin-bottom:6px; }
+    .slide-content p { margin-bottom:12px; }
 
-    .quiz-strip.collapsed {
-        height: 60px;
-        cursor: pointer;
-    }
-    .quiz-strip.collapsed .quiz-body,
-    .quiz-strip.collapsed .skip-link,
-    .quiz-strip.collapsed .quiz-feedback {
-        display: none;
-    }
-    .quiz-toggle {
-        position: absolute;
-        top: 15px;
-        right: 48px;
-        width: 30px;
-        height: 30px;
-        background: white;
-        border: 1px solid var(--primary);
-        border-radius: 50%;
+    .visual-caption { margin-top:20px; font-size:14px; color:rgba(255,255,255,0.9); text-align:center; font-weight:500; }
+
+    .quiz-strip {
+        background: var(--teal-quiz);
+        padding: 16px 48px;
         display: flex;
         align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        z-index: 10;
-        color: var(--primary);
+        gap: 24px;
+        border-top: 1px solid rgba(0,0,0,0.05);
+        position: relative;
+        flex-shrink: 0;
+        min-height: 100px;
+        transition: min-height 0.3s ease;
     }
-    .quiz-feedback { margin-left: 16px; font-weight: 800; font-size: 1.2rem; min-width: 150px; }
+    .quiz-strip.collapsed { min-height: 60px; cursor:pointer; }
+    .quiz-strip.collapsed .quiz-body,
+    .quiz-strip.collapsed .skip-link,
+    .quiz-strip.collapsed .quiz-feedback { display:none; }
 
-    .skip-link {
-        display: block;
-        font-size: 0.8rem;
-        color: #888;
-        text-decoration: underline;
-        cursor: pointer;
-        margin-top: 10px;
-    }
+    .quiz-toggle { position:absolute; top:12px; right:48px; width:30px; height:30px; background:white; border:1px solid var(--primary); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:10; color:var(--primary); }
+    .quiz-intro { display:flex; align-items:center; gap:12px; min-width:160px; flex-shrink:0; }
+    .quiz-icon { color:var(--primary); font-size:1.8rem; }
+    .quiz-labels h4 { font-weight:800; color:var(--primary); }
+    .quiz-labels span { font-size:0.7rem; opacity:0.6; }
+    .quiz-body { flex:1; display:flex; flex-direction:column; justify-content:center; }
+    .quiz-question { font-weight:700; margin-bottom:10px; font-size:1rem; }
+    .quiz-options { display:flex; gap:10px; flex-wrap:wrap; }
+    .quiz-opt { background:var(--white); border:1px solid #ddd; padding:8px 20px; border-radius:100px; font-weight:700; font-size:0.9rem; transition:all 0.2s; cursor:pointer; }
+    .quiz-opt:hover { border-color:var(--secondary); }
+    .quiz-feedback { margin-left:16px; font-weight:800; font-size:1.1rem; min-width:130px; flex-shrink:0; }
+    .skip-link { display:block; font-size:0.8rem; color:#888; text-decoration:underline; cursor:pointer; margin-top:8px; flex-shrink:0; }
 
-    .slide-bottom-nav { padding: 24px 48px; display: flex; justify-content: space-between; align-items: center; background: var(--white); border-top: 1px solid #eee; }
-    .btn-nav { background: none; border: 2px solid #eee; padding: 10px 24px; border-radius: 12px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 8px; transition: all 0.2s; cursor: pointer; }
-    .btn-nav:hover:not(:disabled) { border-color: var(--secondary); color: var(--secondary); }
-    .btn-nav:disabled { opacity: 0.3; }
-    .btn-primary { background: var(--secondary); color: var(--white); border: none; }
-    .btn-primary:hover:not(:disabled) { background: #1E4D8B; }
-    .btn-primary.pulse { animation: pulse-btn 1.5s infinite; }
+    .slide-bottom-nav { padding:16px 48px; display:flex; justify-content:space-between; align-items:center; background:var(--white); border-top:1px solid #eee; flex-shrink:0; }
+    .btn-nav { background:none; border:2px solid #eee; padding:10px 24px; border-radius:12px; font-weight:700; color:var(--primary); display:flex; align-items:center; gap:8px; transition:all 0.2s; cursor:pointer; }
+    .btn-nav:hover:not(:disabled) { border-color:var(--secondary); color:var(--secondary); }
+    .btn-nav:disabled { opacity:0.3; }
+    .btn-primary { background:var(--secondary); color:var(--white); border:none; }
+    .btn-primary:hover:not(:disabled) { background:#1E4D8B; }
 
-    .nav-dots { display: flex; gap: 8px; }
-    .dot { width: 8px; height: 8px; border-radius: 50%; background: #ddd; }
-    .dot.active { background: var(--secondary); width: 24px; border-radius: 4px; }
-    .dot.skipped { background: #FACC15; }
+    .nav-dots { display:flex; gap:8px; }
+    .dot { width:8px; height:8px; border-radius:50%; background:#ddd; }
+    .dot.active { background:var(--secondary); width:24px; border-radius:4px; }
+    .dot.skipped { background:#FACC15; }
 
-    /* Animations */
-    @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        25% { transform: translateX(-10px); }
-        75% { transform: translateX(10px); }
-    }
+    @keyframes pulse-btn { 0%{transform:scale(1);box-shadow:0 0 0 0 rgba(46,108,176,0.7)} 70%{transform:scale(1.05);box-shadow:0 0 0 10px rgba(46,108,176,0)} 100%{transform:scale(1);box-shadow:0 0 0 0 rgba(46,108,176,0)} }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-20px)} }
+    @keyframes powerOn { 0%{opacity:0.3;transform:scale(0.8)} 50%{opacity:1;transform:scale(1.1)} 100%{opacity:1;transform:scale(1)} }
+    @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+    @keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.2);opacity:0.7} }
+    @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-15px)} }
+    @keyframes appear-vertical { 0%{opacity:0;transform:translateY(20px)} 100%{opacity:1;transform:translateY(0)} }
 
-    @keyframes pulse-btn {
-        0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(46, 108, 176, 0.7); }
-        70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(46, 108, 176, 0); }
-        100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(46, 108, 176, 0); }
-    }
+    .anim-float { animation:float 3s ease-in-out infinite; }
+    .anim-power { animation:powerOn 2s ease-in-out infinite; }
+    .anim-spin { animation:spin 4s linear infinite; display:inline-block; }
+    .anim-pulse { animation:pulse 2s ease-in-out infinite; }
+    .anim-bounce { animation:bounce 1s ease-in-out infinite; }
+    .anim-appear { animation:appear-vertical 0.5s ease-out forwards; }
 
-    @keyframes float {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-20px); }
-    }
+    .results-container { text-align:center; max-width:700px; margin:64px auto; padding:64px; background:white; border-radius:32px; box-shadow:0 10px 40px rgba(0,0,0,0.1); }
+    .certificate-card { border:10px solid var(--teal-quiz); padding:48px; border-radius:20px; margin-bottom:32px; }
+    .cert-title { font-size:1.5rem; font-weight:800; color:var(--primary); margin-bottom:24px; }
+    .cert-name { font-size:2.5rem; font-weight:800; border-bottom:3px solid var(--primary); display:inline-block; padding:0 40px 8px; margin-bottom:24px; }
+    .cert-info { font-size:1rem; color:var(--text-muted); margin-top:16px; }
+    .review-list { text-align:left; margin:24px 0; padding-left:24px; }
+    .review-list li { margin-bottom:8px; color:var(--secondary); font-weight:600; }
 
-    @keyframes powerOn {
-        0% { opacity: 0.3; transform: scale(0.8); }
-        50% { opacity: 1; transform: scale(1.1); }
-        100% { opacity: 1; transform: scale(1); }
-    }
+    .final-quiz-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; }
+    .final-progress-bar { flex:1; height:8px; background:#eee; border-radius:4px; margin:0 20px; overflow:hidden; }
+    .final-progress-fill { height:100%; background:var(--secondary); transition:width 0.3s; }
 
-    @keyframes spin {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
-
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); opacity: 1; }
-        50% { transform: scale(1.2); opacity: 0.7; }
-    }
-
-    @keyframes bounce {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-15px); }
-    }
-
-    @keyframes orbit {
-        from { transform: rotate(0deg) translateX(60px) rotate(0deg); }
-        to { transform: rotate(360deg) translateX(60px) rotate(-360deg); }
-    }
-
-    @keyframes appear-vertical {
-        0% { opacity: 0; transform: translateY(20px); }
-        100% { opacity: 1; transform: translateY(0); }
-    }
-
-    .anim-float { animation: float 3s ease-in-out infinite; }
-    .anim-power { animation: powerOn 2s ease-in-out infinite; }
-    .anim-spin { animation: spin 4s linear infinite; }
-    .anim-pulse { animation: pulse 2s ease-in-out infinite; }
-    .anim-bounce { animation: bounce 1s ease-in-out infinite; }
-    .anim-orbit { animation: orbit 6s linear infinite; position: absolute; }
-    .anim-appear { animation: appear-vertical 0.5s ease-out forwards; }
-
-    /* Results */
-    .results-container { text-align: center; max-width: 700px; margin: 64px auto; padding: 64px; background: white; border-radius: 32px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
-    .certificate-card { border: 10px solid var(--teal-quiz); padding: 48px; border-radius: 20px; margin-bottom: 32px; position: relative; }
-    .cert-title { font-size: 1.5rem; font-weight: 800; color: var(--primary); margin-bottom: 24px; }
-    .cert-name { font-size: 2.5rem; font-weight: 800; border-bottom: 3px solid var(--primary); display: inline-block; padding: 0 40px 8px; margin-bottom: 24px; }
-    .cert-info { font-size: 1rem; color: var(--text-muted); margin-top: 16px; }
-
-    .review-list { text-align: left; margin: 24px 0; padding-left: 24px; }
-    .review-list li { margin-bottom: 8px; color: var(--secondary); font-weight: 600; }
-
-    /* Final Quiz Progress */
-    .final-quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-    .final-progress-bar { flex: 1; height: 8px; background: #eee; border-radius: 4px; margin: 0 20px; overflow: hidden; }
-    .final-progress-fill { height: 100%; background: var(--secondary); transition: width 0.3s; }
-
-    .hidden { display: none !important; }
-
+    .hidden { display:none !important; }
     </style>
 </head>
 <body>
@@ -513,7 +294,7 @@
         <button class="sidebar-toggle" onclick="toggleSidebar()">
             <span id="toggle-icon">←</span>
         </button>
-        <div class="sidebar-header clickable" onclick="showDashboard()">
+        <div class="sidebar-header" onclick="showDashboard()" style="cursor:pointer">
             <span class="logo-en">Alba's PC Learning</span>
             <span class="logo-jp">アルバのパソコン学習</span>
         </div>
@@ -524,34 +305,38 @@
             </button>
             <span class="progress-label" id="overall-progress-text">Alba's Progress 0%</span>
             <div class="progress-bar-bg">
-                <div class="progress-bar-fill" id="overall-progress-fill" style="width: 0%"></div>
+                <div class="progress-bar-fill" id="overall-progress-fill" style="width:0%"></div>
             </div>
         </div>
     </aside>
 
     <main id="main-content">
-        <section id="dashboard">
-            <div class="welcome-header">
-                <h1>Welcome back, Alba!</h1>
-                <p>おかえり、アルバ！</p>
-            </div>
-            <div class="continue-card">
-                <div class="continue-info">
-                    <span class="unit-label" id="continue-unit-label">UNIT 1 · PC BASICS</span>
-                    <h2 id="continue-slide-title">はじめに / Introduction</h2>
-                    <p id="continue-slide-desc">Windowsパソコン基礎ガイドへようこそ！</p>
+        <section id="dashboard" style="display:none; overflow-y:auto; height:100%;">
+            <div style="padding:48px; max-width:1200px; margin:0 auto;">
+                <div class="welcome-header">
+                    <h1>Welcome back, Alba!</h1>
+                    <p>おかえり、アルバ！</p>
                 </div>
-                <button class="btn-continue clickable" onclick="startLearning()">
-                    Continue <span class="material-symbols-outlined">arrow_forward</span>
-                </button>
+                <div class="continue-card">
+                    <div class="continue-info">
+                        <span class="unit-label" id="continue-unit-label">UNIT 1 · PC BASICS</span>
+                        <h2 id="continue-slide-title">はじめに / Introduction</h2>
+                        <p id="continue-slide-desc">Windowsパソコン基礎ガイドへようこそ！</p>
+                    </div>
+                    <button class="btn-continue" onclick="startLearning()">
+                        Continue <span class="material-symbols-outlined">arrow_forward</span>
+                    </button>
+                </div>
+                <div class="category-grid" id="category-grid-container"></div>
             </div>
-            <div class="category-grid" id="category-grid-container"></div>
         </section>
 
         <section id="slide-view">
             <div class="slide-top-bar">
-                <div class="top-bar-home" onclick="goHome()">🏠</div>
-                <span class="unit-label" id="top-bar-unit"></span>
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <div class="top-bar-home" onclick="goHome()" title="ホームに戻る">🏠</div>
+                    <span class="unit-label" id="top-bar-unit"></span>
+                </div>
                 <span class="slide-counter" id="top-bar-counter"></span>
             </div>
             <div class="slide-main">
@@ -565,7 +350,7 @@
                     <p class="visual-caption" id="current-slide-caption"></p>
                 </div>
             </div>
-                        <div class="quiz-strip" id="quiz-strip" onclick="if(this.classList.contains('collapsed')) toggleQuiz()">
+            <div class="quiz-strip" id="quiz-strip" onclick="if(this.classList.contains('collapsed')) toggleQuiz()">
                 <button class="quiz-toggle" onclick="event.stopPropagation(); toggleQuiz()">
                     <span class="material-symbols-outlined" id="quiz-toggle-icon">expand_more</span>
                 </button>
@@ -578,793 +363,537 @@
                 <div class="quiz-feedback" id="quiz-feedback"></div>
             </div>
             <div class="slide-bottom-nav">
-                <button class="btn-nav clickable" id="btn-prev" onclick="goToPrevSlide()">
+                <button class="btn-nav" id="btn-prev" onclick="goToPrevSlide()">
                     <span class="material-symbols-outlined">arrow_back</span> 前のスライド
                 </button>
                 <div class="nav-dots" id="nav-dots"></div>
-                <button class="btn-nav clickable btn-primary" id="btn-next" onclick="handleNextClick()">
-                    <span id="next-btn-text">次のスライドへ</span> <span class="material-symbols-outlined">arrow_forward</span>
+                <button class="btn-nav btn-primary" id="btn-next" onclick="handleNextClick()">
+                    <span id="next-btn-text">次のスライドへ</span>
+                    <span class="material-symbols-outlined">arrow_forward</span>
                 </button>
             </div>
         </section>
 
-        <section id="final-quiz" style="display: none; padding: 48px;"></section>
-        <section id="final-results" style="display: none;"></section>
+        <section id="final-quiz" style="display:none; padding:48px; overflow-y:auto; height:100%;"></section>
+        <section id="final-results" style="display:none; overflow-y:auto; height:100%;"></section>
     </main>
-
-    <script>
-        const CATEGORIES = [
-            { id: 'basics', icon: '💻', title: 'Computer Basics', subtitle: 'コンピューター基礎', unlocked: true,
-              lessons: [{ id: 'pc-basics', title: 'PC Basics', subtitle: 'PC基礎', totalSlides: 18, unlocked: true },
-                        { id: 'file-mgmt', title: 'File Management', subtitle: 'ファイル管理', unlocked: false },
-                        { id: 'internet', title: 'Internet Basics', subtitle: 'インターネット基礎', unlocked: false }] },
-            { id: 'cloud', icon: '☁️', title: 'Cloud & Storage', subtitle: 'クラウド & ストレージ', unlocked: false,
-              lessons: [{ id: 'onedrive', title: 'OneDrive', unlocked: false }, { id: 'gdrive', title: 'Google Drive', unlocked: false }, { id: 'backup', title: 'Backup', unlocked: false }] },
-            { id: 'security', icon: '🔒', title: 'Security', subtitle: 'セキュリティ', unlocked: false,
-              lessons: [{ id: 'passwords', title: 'Password Management', unlocked: false }, { id: 'browsing', title: 'Safe Browsing', unlocked: false }, { id: 'phishing', title: 'Phishing', unlocked: false }] },
-            { id: 'uni', icon: '🎓', title: 'University Life', subtitle: '大学生活', unlocked: false,
-              lessons: [{ id: 'word', title: 'Word & OneNote', unlocked: false }, { id: 'writing', title: 'Report Writing', unlocked: false }, { id: 'comm', title: 'Zoom & Teams', unlocked: false }] },
-            { id: 'ai', icon: '🤖', title: 'AI Introduction', subtitle: 'AI入門', unlocked: false,
-              lessons: [{ id: 'what-ai', title: 'What is AI?', unlocked: false }, { id: 'chatgpt', title: 'Using ChatGPT', unlocked: false }, { id: 'claude', title: 'Using Claude', unlocked: false }, { id: 'study-ai', title: 'Studying with AI', unlocked: false }] },
-            { id: 'trouble', icon: '🛠️', title: 'Troubleshooting', subtitle: 'トラブルシューティング', unlocked: false,
-              lessons: [{ id: 'remote', title: 'Remote Support', unlocked: false }, { id: 'common', title: 'Common Problems', unlocked: false }] }
-        ];
-
-                const SLIDES = [
-            {
-                unit: 'UNIT 1 · PC SETUP', title: 'Windowsパソコン基礎ガイドへようこそ！', subtitle: 'Welcome to the Windows PC Basics Guide',
-                content: `<p>今日から一緒に、新しいパソコンの使い方をマスターしていきましょう。</p><p>学習する18のステップ：</p><ul><li>パソコンの起動と初期設定</li><li>MicrosoftアカウントとPINの設定</li><li>デスクトップと学校アカウントの追加</li><li>ファイル管理とOneDriveクラウド同期</li><li>スマホとの連携とセキュリティ</li><li>困った時のリモートサポート</li></ul><p>「自分でもできる！」という自信を育てるガイドです。楽しみながら進めましょう！</p>`,
-                emoji: '💻 ☁️ 📱', emojiClass: 'anim-float',
-                caption: 'パソコン・クラウド・スマホが連携！', quiz: null, buttonText: '始めましょう！→'
-            },
-            {
-                unit: 'UNIT 1 · PC SETUP', title: 'パソコンを初めて起動しよう', subtitle: 'Turning on your PC for the first time',
-                content: `<p><strong>やってみよう（Do this now）：</strong></p><ol><li>1. パソコンの電源ボタンを押す</li><li>2. Windowsのロゴが画面に表示されるのを待つ</li><li>3. セットアップ画面が表示される</li></ol><p>※ 初回起動には数分かかる場合があります。焦らず待ちましょう。</p>`,
-                emoji: '⚡ 💻', emojiClass: 'anim-power',
-                caption: '電源を入れて起動しよう！',
-                quiz: {
-                    questions: [
-                        { id: 's2q1', q: 'Q1: パソコンを起動するにはどうすればいいですか？', options: [{ text: '電源ボタンを押す', correct: true }, { text: 'キーボードのEnterキーを押す', correct: false }, { text: 'マウスをクリックする', correct: false }] }
-                    ]
-                }
-            },
-            {
-                unit: 'UNIT 1 · PC SETUP', title: 'Windowsの初期設定をしよう', subtitle: 'Setting up Windows for the first time',
-                content: `<p><strong>やってみよう：</strong></p><ol><li>1. 言語を選択する → 「日本語」を選ぶ</li><li>2. 地域を選択する → 「日本」を選ぶ</li><li>3. キーボードレイアウトを選ぶ → 「Microsoft IME」</li><li>4. インターネットに接続する → Wi-Fiを選んでパスワードを入力</li></ol>`,
-                emoji: '🌍 ⌨️ 📶', emojiClass: 'anim-pulse',
-                caption: '言語・地域・Wi-Fiを設定しよう',
-                quiz: {
-                    questions: [
-                        { id: 's3q1', q: 'Q1: 初期設定で最初に選ぶものは何ですか？', options: [{ text: '言語', correct: true }, { text: 'パスワード', correct: false }, { text: 'アプリ', correct: false }] }
-                    ]
-                }
-            },
-            {
-                unit: 'UNIT 1 · PC SETUP', title: '個人用Microsoftアカウントでサインイン', subtitle: 'Sign in with your personal Microsoft account',
-                content: `<p><strong>やってみよう：</strong></p><ol><li>1. 「Microsoftアカウントでサインイン」を選ぶ</li><li>2. 個人用メールアドレスを入力する</li><li>3. パスワードを入力する</li><li>4. 本人確認のコードが届いたら入力する</li><li>5. サインイン完了！</li></ol><p>アカウントがない場合：「作成する」をクリックして新規作成してください。</p>`,
-                emoji: '👤 🔑 ✅', emojiClass: 'anim-appear',
-                caption: 'Microsoftアカウントでサインイン',
-                quiz: {
-                    questions: [
-                        { id: 's4q1', q: 'Q1: Microsoftアカウントでサインインするには何が必要ですか？', options: [{ text: 'メールアドレスとパスワード', correct: true }, { text: 'クレジットカード番号', correct: false }, { text: '電話番号のみ', correct: false }] }
-                    ]
-                }
-            },
-            {
-                unit: 'UNIT 1 · PC SETUP', title: 'PINコードを設定しよう', subtitle: 'Set up a PIN for faster, safer login',
-                content: `<p><strong>PINコードとは？</strong><br>パスワードの代わりに使える数字のコード。このパソコンだけで使える、より安全な方法です。</p><p><strong>やってみよう：</strong></p><ol><li>1. 「PINを作成する」をクリック</li><li>2. 6桁以上の数字を入力する</li><li>3. もう一度同じ数字を入力して確認</li><li>4. 「OK」をクリックして完了</li></ol><p>※ 誕生日や「123456」は使わないこと！</p>`,
-                emoji: '🔢 🔒', emojiClass: 'anim-bounce',
-                caption: 'PINコードでより安全に！',
-                quiz: {
-                    questions: [
-                        { id: 's5q1', q: 'Q1: PINコードとは何ですか？', options: [{ text: 'このパソコンだけで使える数字のログインコード', correct: true }, { text: 'インターネットのパスワード', correct: false }, { text: 'Wi-Fiのパスワード', correct: false }] }
-                    ]
-                }
-            },
-            {
-                unit: 'UNIT 1 · PC SETUP', title: 'デスクトップを見てみよう', subtitle: 'Understanding what you see on screen',
-                content: `<p><strong>画面に表示されているものを確認しよう：</strong></p><ul><li><strong>デスクトップ：</strong>作業台。ファイルやショートカットを置ける場所</li><li><strong>タスクバー：</strong>画面下部の帯。よく使うアプリが並ぶ</li><li><strong>スタートメニュー：</strong>左下のWindowsマーク</li><li><strong>通知エリア：</strong>右下。時計・音量・Wi-Fi・OneDriveアイコン</li><li><strong>ファイルエクスプローラー：</strong>タスクバーのフォルダアイコン</li></ul>`,
-                emoji: '🖥️', emojiClass: 'anim-float',
-                caption: 'デスクトップの各エリア',
-                quiz: {
-                    questions: [
-                        { id: 's6q1', q: 'Q1: タスクバーはどこにありますか？', options: [{ text: '画面の下部', correct: true }, { text: '画面の左側', correct: false }, { text: '画面の上部', correct: false }] },
-                        { id: 's6q2', q: 'Q2: スタートメニューを開くにはどうすればいいですか？', options: [{ text: '左下のWindowsマークをクリック', correct: true }, { text: '画面右上をクリック', correct: false }, { text: 'F1キーを押す', correct: false }] }
-                    ]
-                }
-            },
-            {
-                unit: 'UNIT 1 · PC SETUP', title: '学校アカウントを追加しよう', subtitle: 'Adding your university account to Windows',
-                content: `<p><strong>重要：新しいWindowsユーザーを作る必要はありません！</strong></p><p><strong>やってみよう：</strong></p><ol><li>1. スタートメニュー → 「設定」（歯車アイコン）</li><li>2. 「アカウント」をクリック</li><li>3. 「職場または学校にアクセスする」を選択</li><li>4. 「接続」ボタンをクリック</li><li>5. 大学のメールアドレスを入力（例：s123456@university.ac.jp）</li><li>6. 大学のパスワードを入力 → サインイン完了！</li></ol>`,
-                emoji: '⚙️', emojiClass: 'anim-spin',
-                caption: '設定から学校アカウントを追加',
-                quiz: {
-                    questions: [
-                        { id: 's7q1', q: 'Q1: 学校アカウントを追加するとき、新しいWindowsユーザーは必要？', options: [{ text: 'いいえ、同じユーザー内で追加できる', correct: true }, { text: 'はい、必ず作る必要がある', correct: false }, { text: '大学のIT部門に依頼する必要がある', correct: false }] },
-                        { id: 's7q2', q: 'Q2: 学校アカウントを追加する設定はどこにありますか？', options: [{ text: '設定 → アカウント → 職場または学校にアクセスする', correct: true }, { text: '設定 → システム → ディスプレイ', correct: false }, { text: 'コントロールパネル → プリンター', correct: false }] }
-                    ]
-                }
-            },
-            {
-                unit: 'UNIT 1 · PC SETUP', title: '2つのアカウントが設定できたか確認しよう', subtitle: 'Confirming both accounts are working',
-                content: `<p><strong>やってみよう — 確認方法：</strong></p><ol><li>1. 設定 → アカウント → 「あなたの情報」を開く</li><li>2. 個人用Microsoftアカウントが表示されているか確認</li><li>3. 設定 → アカウント → 「職場または学校にアクセスする」を開く</li><li>4. 大学のアカウントが表示されているか確認</li></ol><p><strong>2つのアカウントの違い：</strong><br>個人アカウント → プライベートなファイル用<br>学校アカウント → 大学の課題・レポート用<br>→ ファイルは完全に分離されます！</p>`,
-                emoji: '💙👤 💚🎓', emojiClass: 'anim-pulse',
-                caption: '2つのアカウントが設定完了！',
-                quiz: {
-                    questions: [
-                        { id: 's8q1', q: 'Q1: 個人アカウントと学校アカウントのファイルはどうなっていますか？', options: [{ text: '完全に分離されている', correct: true }, { text: '自動的に混ざる', correct: false }, { text: '同じフォルダに保存される', correct: false }] }
-                    ]
-                }
-            },
-            {
-                unit: 'UNIT 1 · PC SETUP', title: 'ファイルエクスプローラーを開いてみよう', subtitle: 'Opening and understanding File Explorer',
-                content: `<p><strong>やってみよう：</strong><br>タスクバーのフォルダアイコンをクリックして開く</p><p><strong>画面の見かた：</strong></p><ul><li><strong>左側パネル：</strong>よく使う場所へ素早くアクセス</li><li><strong>右側メインエリア：</strong>ファイルとフォルダが表示される</li><li><strong>上部アドレスバー：</strong>今どのフォルダにいるかがわかる</li><li><strong>上部リボン：</strong>コピー・移動・削除などの操作</li></ul>`,
-                emoji: '📂 📄', emojiClass: 'anim-float',
-                caption: 'ファイルエクスプローラーを開こう',
-                quiz: {
-                    questions: [
-                        { id: 's9q1', q: 'Q1: ファイルエクスプローラーを開くにはどうすればいいですか？', options: [{ text: 'タスクバーのフォルダアイコンをクリック', correct: true }, { text: 'インターネットブラウザを開く', correct: false }, { text: 'スタートメニューからWordを開く', correct: false }] }
-                    ]
-                }
-            },
-            {
-                unit: 'UNIT 1 · PC SETUP', title: 'フォルダの構造を見てみよう', subtitle: 'Understanding the folder hierarchy',
-                content: `<p><strong>左側パネルに表示される構造を確認しよう：</strong></p><ul><li>💻 PC（パソコン全体）<ul><li>📁 ドキュメント（ローカル保存）</li><li>📁 ダウンロード（ローカル保存）</li><li>☁️ OneDrive - Personal（個人用クラウド）</li><li>☁️ OneDrive - 大学名（学校用クラウド）</li></ul></li></ul><p>ポイント：2つのOneDriveが別々に表示される！</p>`,
-                emoji: '💻 📁 ☁️', emojiClass: 'anim-pulse',
-                caption: 'フォルダの構造を理解しよう',
-                quiz: {
-                    questions: [
-                        { id: 's10q1', q: 'Q1: ファイルエクスプローラーで学校用OneDriveはどう表示されますか？', options: [{ text: '「OneDrive - 大学名」として表示される', correct: true }, { text: '「マイドキュメント」として表示される', correct: false }, { text: '「Cドライブ」の中に隠れている', correct: false }] }
-                    ]
-                }
-            },
-            {
-                unit: 'UNIT 1 · PC SETUP', title: 'クラウドとは何か？', subtitle: 'Understanding cloud storage',
-                content: `<p>クラウド＝インターネット上の大きなコンピュータにファイルを保存すること</p><p><strong>PC内（ローカル）：</strong><br>✓ インターネット不要<br>✗ そのPCでしか見られない<br>✗ PCが壊れるとファイルを失う可能性</p><p><strong>クラウド（OneDrive）：</strong><br>✓ どこからでも見られる<br>✓ PCが壊れてもファイルは安全<br>✗ インターネット接続が必要</p>`,
-                emoji: '☁️', emojiClass: 'anim-pulse',
-                caption: 'クラウドはどこからでもアクセス可能',
-                quiz: {
-                    questions: [
-                        { id: 's11q1', q: 'Q1: クラウドストレージの最大のメリットは？', options: [{ text: 'PCが壊れてもファイルが安全に守られる', correct: true }, { text: 'パソコンが速くなる', correct: false }, { text: 'インターネットなしで使える', correct: false }] }
-                    ]
-                }
-            },
-            {
-                unit: 'UNIT 1 · PC SETUP', title: 'OneDriveの仕組み', subtitle: 'How automatic sync works',
-                content: `<p>OneDriveフォルダに保存するだけ！あとは自動！</p><p><strong>仕組み：</strong></p><ol><li>1. OneDriveフォルダにファイルを保存する</li><li>2. インターネットに接続されると自動アップロード</li><li>3. スマホ・タブレットにも自動的に反映される</li><li>4. どのデバイスで変更しても全デバイスに反映</li></ol><p><strong>やってみよう：</strong><br>ファイルエクスプローラーで「OneDrive - Personal」フォルダを開いて中を見てみよう</p>`,
-                emoji: '🔄', emojiClass: 'anim-spin',
-                caption: '自動的に同期されます！',
-                quiz: {
-                    questions: [
-                        { id: 's12q1', q: 'Q1: OneDriveに保存したファイルはいつ同期されますか？', options: [{ text: 'インターネットに接続されている時に自動的に', correct: true }, { text: '毎週月曜日に自動的に', correct: false }, { text: '手動でボタンを押した時だけ', correct: false }] }
-                    ]
-                }
-            },
-            {
-                unit: 'UNIT 1 · PC SETUP', title: 'スマホでOneDriveを使おう', subtitle: 'Access your files anywhere on your phone',
-                content: `<p><strong>やってみよう（スマホで）：</strong></p><ol><li>1. App Store または Google Playを開く</li><li>2. 「OneDrive」で検索してインストール（無料）</li><li>3. 個人のMicrosoftアカウントでサインインする</li><li>4. PCのOneDriveフォルダのファイルが表示される！</li><li>5. 学校アカウントも追加でサインイン可能</li></ol><p>便利機能：カメラのバックアップをオンにすると写真が自動でPCにも届く！</p>`,
-                emoji: '📱 ☁️', emojiClass: 'anim-bounce',
-                caption: 'スマホからいつでもアクセス！',
-                quiz: {
-                    questions: [
-                        { id: 's13q1', q: 'Q1: スマホのOneDriveアプリはいくらですか？', options: [{ text: '無料', correct: true }, { text: '月額500円', correct: false }, { text: 'PCを購入した時だけ無料', correct: false }] },
-                        { id: 's13q2', q: 'Q2: スマホで撮った写真をPCでも見るには？', options: [{ text: 'OneDriveの自動バックアップ機能を使う', correct: true }, { text: 'USBケーブルでPCと接続する', correct: false }, { text: 'メールで自分に送る', correct: false }] }
-                    ]
-                }
-            },
-            {
-                unit: 'UNIT 1 · PC SETUP', title: 'OneDriveアイコンを理解しよう', subtitle: 'What the sync status icons mean',
-                content: `<p>タスクバー右下のOneDriveアイコンを確認しよう：</p><ul><li>✅ <strong>青いチェック：</strong>同期完了</li><li>🔄 <strong>矢印（円形）：</strong>同期中</li><li>❌ <strong>赤いバツ：</strong>エラー</li><li>⚪ <strong>白いアイコン：</strong>クラウドのみ</li><li>☁️ <strong>雲マーク：</strong>正常動作中</li></ul>`,
-                emoji: '✅ 🔄 ❌', emojiClass: 'anim-appear',
-                caption: 'アイコンで同期状態がわかる',
-                quiz: {
-                    questions: [
-                        { id: 's14q1', q: 'Q1: 青いチェックマークのアイコンは何を意味しますか？', options: [{ text: '同期完了。クラウドとPCの両方に最新版がある', correct: true }, { text: 'ファイルにエラーがある', correct: false }, { text: 'アップロード中', correct: false }] }
-                    ]
-                }
-            },
-            {
-                unit: 'UNIT 1 · PC SETUP', title: 'Wordでのアカウント切替', subtitle: 'Using the right account in Office apps',
-                content: `<p>保存先はアカウントによって変わります！</p><ul><li><strong>個人アカウントで保存：</strong>OneDrive - Personal に保存</li><li><strong>学校アカウントで保存：</strong>OneDrive - 大学名 に保存</li></ul><p><strong>やってみよう：</strong><br>Wordを開く → 右上のアカウントアイコンを確認。「ファイル」→「アカウント」から切り替えできます。</p><p>ルール：大学の課題は必ず学校アカウントで保存！</p>`,
-                emoji: '📝 🔄 💙💚', emojiClass: 'anim-spin',
-                caption: 'アカウントを切り替えて保存先を選ぶ',
-                quiz: {
-                    questions: [
-                        { id: 's15q1', q: 'Q1: Wordで学校アカウントを使って保存するとどこに保存されますか？', options: [{ text: '学校用OneDrive（OneDrive - 大学名）に保存される', correct: true }, { text: 'デスクトップに自動保存される', correct: false }, { text: '個人用OneDriveに保存される', correct: false }] }
-                    ]
-                }
-            },
-            {
-                unit: 'UNIT 1 · PC SETUP', title: 'パスワード管理', subtitle: 'Keeping your accounts secure',
-                content: `<p><strong>パスワードの5つのルール：</strong></p><ol><li>1. 個人と学校は必ず別々のパスワードを使う</li><li>2. 8文字以上で数字・記号を含める</li><li>3. 誰にも教えない</li><li>4. 忘れた場合は「パスワードを忘れた場合」から回復</li><li>5. PCを離れるとき → <strong>Windowsキー + L</strong> でロック！</li></ol><p><strong>やってみよう：</strong><br>今すぐ Windowsキー + L を押してみよう！ロック画面になったらPINで戻れます。</p>`,
-                emoji: '🔒 ⚠️', emojiClass: 'anim-pulse',
-                caption: 'パスワードは安全に管理しよう！',
-                quiz: {
-                    questions: [
-                        { id: 's16q1', q: 'Q1: PCをすぐにロックするショートカットは？', options: [{ text: 'Windowsキー + L', correct: true }, { text: 'Ctrl + Alt + Delete', correct: false }, { text: 'Ctrl + S', correct: false }] },
-                        { id: 's16q2', q: 'Q2: パスワードは個人と学校で？', options: [{ text: 'それぞれ別々のパスワードを使う', correct: true }, { text: '同じパスワードにする', correct: false }, { text: 'パスワードを設定しない', correct: false }] }
-                    ]
-                }
-            },
-            {
-                unit: 'UNIT 1 · PC SETUP', title: 'Quick Assist / Remote Support', subtitle: 'How to get remote help from a trusted person',
-                content: `<p>Quick Assist＝Windowsに最初から入っている無料ツール。お父さんが遠くから画面を見て手伝える！</p><p><strong>やってみよう：</strong></p><ol><li>1. <strong>Windowsキー + Ctrl + Q</strong> を押す</li><li>2. 「サポートを受ける」をクリック</li><li>3. お父さんが送ってくれた6桁のコードを入力</li><li>4. 「許可」をクリック → お父さんが画面を見られる</li><li>5. 終わったら「セッションを終了」</li></ol><p>⚠️ 信頼できる家族以外とは絶対に共有しないこと！</p>`,
-                emoji: '💻 🤝 💻', emojiClass: 'anim-pulse',
-                caption: '離れた場所からサポート！',
-                quiz: {
-                    questions: [
-                        { id: 's17q1', q: 'Q1: Quick Assistを開くショートカットは？', options: [{ text: 'Windowsキー + Ctrl + Q', correct: true }, { text: 'Ctrl + Alt + Delete', correct: false }, { text: 'F12キー', correct: false }] },
-                        { id: 's17q2', q: 'Q2: Quick Assistのセッションを共有していい相手は？', options: [{ text: '信頼できる家族や友人のみ', correct: true }, { text: '誰でもOK', correct: false }, { text: 'インターネットで知り合った人', correct: false }] }
-                    ]
-                }
-            },
-            {
-                unit: 'UNIT 1 · PC SETUP', title: 'まとめ — セットアップ完了！', subtitle: 'You\'ve completed the Windows PC setup!',
-                content: `<p><strong>完了した項目：</strong></p><ul><li>✅ パソコンの起動と初期設定</li><li>✅ アカウント設定とPINコード</li><li>✅ 学校アカウントの追加</li><li>✅ ファイル管理とOneDrive同期</li><li>✅ スマホ連携とセキュリティ</li><li>✅ リモートサポートの準備</li></ul>`,
-                emoji: '🎉 🏆 ⭐', emojiClass: 'anim-bounce',
-                caption: 'セットアップ完了！おめでとう！', quiz: null, buttonText: '最終クイズに挑戦！🎯'
-            }
-        ];
-
-        const FINAL_QUIZ = [
-            { q: 'パソコンを起動するにはどうすればいいですか？', options: ['電源ボタンを押す', 'Enterキーを押す', 'マウスをクリックする'], correct: 0 },
-            { q: 'PINコードとは何ですか？', options: ['このパソコンだけで使える数字のログインコード', 'インターネットのパスワード', 'Wi-Fiのパスワード'], correct: 0 },
-            { q: '学校アカウントを追加するとき新しいWindowsユーザーは必要？', options: ['いいえ', 'はい', '場合による'], correct: 0 },
-            { q: 'タスクバーはどこにありますか？', options: ['画面の下部', '画面の左側', '画面の上部'], correct: 0 },
-            { q: 'ファイルエクスプローラーを開くには？', options: ['タスクバーのフォルダアイコン', 'インターネットブラウザ', 'Wordアイコン'], correct: 0 },
-            { q: '2つのOneDriveフォルダはどう表示されますか？', options: ['ファイルエクスプローラーで別々に表示される', '同じフォルダの中に入っている', 'デスクトップにある'], correct: 0 },
-            { q: 'クラウド保存の最大のメリットは？', options: ['PCが壊れてもファイルが安全', 'パソコンが速くなる', 'インターネット不要で使える'], correct: 0 },
-            { q: 'OneDriveのファイルはいつ同期されますか？', options: ['インターネット接続中に自動的に', '毎朝6時に', '手動のみ'], correct: 0 },
-            { q: 'スマホのOneDriveアプリは？', options: ['無料', '有料', 'PCを買った人だけ無料'], correct: 0 },
-            { q: '青いチェックマークのOneDriveアイコンの意味は？', options: ['同期完了', 'エラー', 'アップロード中'], correct: 0 },
-            { q: 'Wordで学校の課題はどのアカウントで保存すべき？', options: ['学校アカウント（OneDrive - 大学名）', '個人アカウント', 'どちらでもいい'], correct: 0 },
-            { q: 'PCをすぐロックするショートカットは？', options: ['Windowsキー + L', 'Ctrl + S', 'F12'], correct: 0 },
-            { q: 'Quick Assistのショートカットは？', options: ['Windowsキー + Ctrl + Q', 'F12', 'Alt + Tab'], correct: 0 },
-            { q: 'Quick Assistは誰と使うべきですか？', options: ['信頼できる家族のみ', '誰でもOK', '大学の先生のみ'], correct: 0 },
-            { q: '個人アカウントと学校アカウントのファイルは？', options: ['完全に分離されている', '混ざる', '毎週同期される'], correct: 0 }
-        ];
-
-
-                let state = {
-            currentSlide: 0,
-            completedSlides: [],
-            completedLessons: [],
-            skippedSlides: [],
-            quizStatus: {}, // slideIdx: { qIdx: true/false }
-            view: 'dashboard',
-            sidebarCollapsed: localStorage.getItem('alba-sidebar') === 'true',
-            quizCollapsed: localStorage.getItem("alba-quiz-collapsed") === "true"
-        };
-
-        function saveProgress() {
-            localStorage.setItem('alba-pc-progress', JSON.stringify(state));
-            updateOverallProgress();
-        }
-
-        function loadProgress() {
-            const saved = localStorage.getItem('alba-pc-progress');
-            if (saved) {
-                const loadedState = JSON.parse(saved);
-                state = { ...state, ...loadedState };
-            }
-
-            const sidebarSaved = localStorage.getItem('alba-sidebar');
-            if (sidebarSaved !== null) {
-                state.sidebarCollapsed = sidebarSaved === 'true';
-            }
-
-            if (state.sidebarCollapsed) {
-                document.getElementById('sidebar').classList.add('collapsed');
-                const icon = document.getElementById('toggle-icon');
-                if (icon) icon.innerText = '→';
-            } else {
-                const icon = document.getElementById('toggle-icon');
-                if (icon) icon.innerText = '←';
-            }
-
-            const quizSaved = localStorage.getItem("alba-quiz-collapsed");
-            if (quizSaved !== null) {
-                state.quizCollapsed = quizSaved === "true";
-            }
-
-            const quizStrip = document.getElementById("quiz-strip");
-            const quizIcon = document.getElementById("quiz-toggle-icon");
-            if (state.quizCollapsed) {
-                quizStrip.classList.add("collapsed");
-                if (quizIcon) quizIcon.innerText = "expand_less";
-            } else {
-                quizStrip.classList.remove("collapsed");
-                if (quizIcon) quizIcon.innerText = "expand_more";
-            }
-
-            if (state.view === 'dashboard') showDashboard();
-            else if (state.view === 'slide') startLearning();
-            else if (state.view === 'final-quiz') startFinalQuiz();
-            else showDashboard();
-        }
-
-        function updateUI() {
-            renderSidebar();
-            renderDashboard();
-            updateOverallProgress();
-            if (state.view === 'slide') renderSlide(state.currentSlide);
-        }
-
-        function toggleSidebar() {
-            state.sidebarCollapsed = !state.sidebarCollapsed;
-            const sidebar = document.getElementById('sidebar');
-            const icon = document.getElementById('toggle-icon');
-
-            if (state.sidebarCollapsed) {
-                sidebar.classList.add('collapsed');
-                if (icon) icon.innerText = '→';
-            } else {
-                sidebar.classList.remove('collapsed');
-                if (icon) icon.innerText = '←';
-            }
-            localStorage.setItem('alba-sidebar', state.sidebarCollapsed);
-        }
-        function toggleQuiz() {
-            state.quizCollapsed = !state.quizCollapsed;
-            const quizStrip = document.getElementById("quiz-strip");
-            const icon = document.getElementById("quiz-toggle-icon");
-
-            if (state.quizCollapsed) {
-                quizStrip.classList.add("collapsed");
-                if (icon) icon.innerText = "expand_less";
-            } else {
-                quizStrip.classList.remove("collapsed");
-                if (icon) icon.innerText = "expand_more";
-            }
-            localStorage.setItem("alba-quiz-collapsed", state.quizCollapsed);
-        }
-
-
-        function confirmReset() {
-            if (confirm("本当にリセットしますか？すべての進捗が消えます。")) {
-                localStorage.removeItem('alba-pc-progress');
-                location.reload();
-            }
-        }
-
-        function renderSidebar() {
-            const container = document.getElementById('sidebar-nav-container');
-            const homeActive = state.view === 'dashboard' ? 'active' : '';
-
-            let html = `
-                <div class="home-link ${homeActive}" onclick="goHome()">
-                    <span class="material-symbols-outlined">home</span>
-                    <div class="home-info">
-                        <span class="home-title">Home</span>
-                        <span class="home-subtitle">ホーム</span>
-                    </div>
-                </div>
-            `;
-
-            html += CATEGORIES.map(cat => `
-                <div class="category-item ${cat.id === 'basics' ? 'open' : ''}">
-                    <button class="category-header clickable" onclick="toggleCategory(this)">
-                        <span class="cat-card-icon" style="font-size: 1.2rem">${cat.icon}</span>
-                        <div class="category-info">
-                            <span class="cat-title">${cat.title}</span>
-                            <span class="cat-subtitle">${cat.subtitle}</span>
-                        </div>
-                        <span class="material-symbols-outlined chevron">expand_more</span>
-                    </button>
-                    <div class="category-lessons">
-                        ${(cat.lessons || []).map(lesson => {
-                            const isCompleted = state.completedLessons.includes(lesson.id);
-                            const lessonActive = state.view === 'slide' && lesson.id === 'pc-basics' ? 'active' : '';
-                            return `
-                                <a href="#" class="lesson-link ${lessonActive} clickable" onclick="startLearning()">
-                                    <span class="material-symbols-outlined status-icon ${isCompleted ? 'status-check' : 'status-locked'}">
-                                        ${isCompleted ? 'check_circle' : 'lock'}
-                                    </span>
-                                    ${lesson.title}
-                                </a>
-                            `;
-                        }).join('')}
-                    </div>
-                </div>
-            `).join('');
-
-            container.innerHTML = html;
-        }
-
-        function toggleCategory(btn) {
-            btn.parentElement.classList.toggle('open');
-        }
-
-        function renderDashboard() {
-            const container = document.getElementById('category-grid-container');
-            container.innerHTML = CATEGORIES.map(cat => {
-                const total = cat.lessons ? cat.lessons.length : 0;
-                const completedCount = cat.lessons ? cat.lessons.filter(l => state.completedLessons.includes(l.id)).length : 0;
-                const percent = total > 0 ? Math.round((completedCount / total) * 100) : 0;
-
-                return `
-                <div class="cat-card ${cat.unlocked ? '' : 'locked'} clickable" onclick="${cat.unlocked ? 'startLearning()' : ''}">
-                    <div class="cat-card-header">
-                        <span class="cat-card-icon">${cat.icon}</span>
-                        <div class="cat-card-titles">
-                            <span class="cat-card-title">${cat.title}</span>
-                            <span class="cat-card-subtitle">${cat.subtitle}</span>
-                        </div>
-                    </div>
-                    <div class="cat-card-footer">
-                        <div class="cat-stats">
-                            <span>${completedCount}/${total} Lessons</span>
-                            <span>${percent}%</span>
-                        </div>
-                        <div class="progress-bar-bg" style="background: #eee;">
-                            <div class="progress-bar-fill" style="width: ${percent}%; background: var(--secondary);"></div>
-                        </div>
-                        ${!cat.unlocked ? '<span class="badge-locked"><span class="material-symbols-outlined" style="font-size: 0.8rem; vertical-align: middle">lock</span> Coming Soon</span>' : ''}
-                    </div>
-                </div>
-            `}).join('');
-
-            const lastSlide = SLIDES[state.currentSlide];
-            document.getElementById('continue-slide-title').innerText = lastSlide.title;
-            document.getElementById('continue-slide-desc').innerText = lastSlide.subtitle;
-        }
-
-        function updateOverallProgress() {
-            const total = SLIDES.length;
-            const completed = state.completedSlides.length;
-            const percent = Math.round((completed / total) * 100);
-            document.getElementById('overall-progress-text').innerText = `Alba's Progress ${percent}%`;
-            document.getElementById('overall-progress-fill').style.width = `${percent}%`;
-        }
-
-        function startLearning() {
-            state.view = 'slide';
-            document.getElementById('dashboard').style.display = 'none';
-            document.getElementById('slide-view').style.display = 'flex';
-            document.getElementById('final-results').style.display = 'none';
-            document.getElementById('final-quiz').style.display = 'none';
-            renderSlide(state.currentSlide);
-            renderSidebar();
-            saveProgress();
-        }
-
-        function goHome() {
-            if (state.view === 'slide') {
-                showHomeConfirmation();
-            } else {
-                showDashboard();
-            }
-        }
-
-        function showHomeConfirmation() {
-            const modal = document.getElementById('home-modal');
-            if (modal) modal.style.display = 'flex';
-        }
-
-        function closeModal() {
-            const modal = document.getElementById('home-modal');
-            if (modal) modal.style.display = 'none';
-        }
-
-        function confirmGoHome() {
-            closeModal();
-            showDashboard();
-        }
-
-        function showDashboard() {
-            state.view = 'dashboard';
-            document.getElementById('dashboard').style.display = 'block';
-            document.getElementById('slide-view').style.display = 'none';
-            document.getElementById('final-results').style.display = 'none';
-            document.getElementById('final-quiz').style.display = 'none';
-            renderSidebar();
-            saveProgress();
-        }
-
-        function renderSlide(index) {
-            const slide = SLIDES[index];
-            document.getElementById('top-bar-unit').innerText = slide.unit;
-            document.getElementById('top-bar-counter').innerText = `SLIDE ${index + 1} / ${SLIDES.length}`;
-            document.getElementById('current-slide-title').innerText = slide.title;
-            document.getElementById('current-slide-subtitle').innerText = slide.subtitle;
-            document.getElementById('current-slide-content').innerHTML = slide.content;
-
-            const emojiEl = document.getElementById('current-slide-emoji');
-            emojiEl.innerText = slide.emoji || '';
-            emojiEl.className = 'visual-emoji ' + (slide.emojiClass || '');
-
-            document.getElementById('current-slide-caption').innerText = slide.caption || '';
-
-            const quizStrip = document.getElementById('quiz-strip');
-            const quizBody = document.getElementById('quiz-body');
-            const feedback = document.getElementById('quiz-feedback');
-            feedback.innerHTML = '';
-
-            if (slide.quiz) {
-            if (state.quizCollapsed) {
-                quizStrip.classList.add("collapsed");
-            } else {
-                quizStrip.classList.remove("collapsed");
-            }
-                quizStrip.classList.remove('hidden');
-                if (!state.quizStatus[index]) state.quizStatus[index] = {};
-
-                let currentQIdx = 0;
-                for (let i = 0; i < slide.quiz.questions.length; i++) {
-                    if (state.quizStatus[index][i]) currentQIdx = i + 1;
-                    else { currentQIdx = i; break; }
-                }
-
-                if (currentQIdx >= slide.quiz.questions.length) {
-                    quizBody.innerHTML = `
-                        <div class="quiz-item anim-appear">
-                            <p class="quiz-question">このスライドのクイズはすべて完了しました！</p>
-                            <button class="btn-nav clickable btn-primary pulse-blue" onclick="handleNextClick()" style="margin: 16px auto; display: block;">
-                                次のスライドへ →
-                            </button>
-                        </div>
-                    `;
-                } else {
-                    const q = slide.quiz.questions[currentQIdx];
-                    quizBody.innerHTML = `
-                        <div class="quiz-item fade-in" id="q-${index}-${currentQIdx}">
-                            <p class="quiz-question">${q.q}</p>
-                            <div class="quiz-options">
-                                ${q.options.map((opt, oIdx) => `
-                                    <button class="quiz-opt clickable"
-                                            onclick="checkAnswer(${index}, ${currentQIdx}, ${oIdx}, ${opt.correct})">
-                                        ${opt.text}
-                                    </button>
-                                `).join('')}
-                            </div>
-                        </div>
-                    `;
-                }
-            } else {
-                quizStrip.classList.add('hidden');
-            }
-
-            updateNavButtons(index);
-            renderDots();
-        }
-
-        function updateNavButtons(index) {
-            const slide = SLIDES[index];
-            document.getElementById('btn-prev').disabled = index === 0;
-            const isSlideCompleted = checkSlideCompletion(index);
-            const nextBtnText = document.getElementById('next-btn-text');
-            const nextBtn = document.getElementById('btn-next');
-
-            nextBtn.classList.remove('pulse');
-
-            if (index === SLIDES.length - 1) {
-                nextBtnText.innerText = slide.buttonText || '最終クイズへ';
-                nextBtn.disabled = !isSlideCompleted && slide.quiz;
-            } else {
-                nextBtnText.innerText = slide.buttonText || '次のスライドへ';
-                if (!slide.quiz || index === 0 || state.skippedSlides.includes(index)) {
-                    nextBtn.disabled = false;
-                } else {
-                    nextBtn.disabled = !isSlideCompleted;
-                }
-            }
-
-            if (!nextBtn.disabled && isSlideCompleted) {
-                nextBtn.classList.add('pulse');
-            }
-        }
-
-        function checkSlideCompletion(index) {
-            const slide = SLIDES[index];
-            if (!slide.quiz) return true;
-            if (state.skippedSlides.includes(index)) return true;
-            const status = state.quizStatus[index] || {};
-            return slide.quiz.questions.every((_, qIdx) => status[qIdx] === true);
-        }
-
-        function checkAnswer(slideIndex, qIndex, optIndex, isCorrect) {
-            const quizItem = document.getElementById(`q-${slideIndex}-${qIndex}`);
-            const options = quizItem.querySelectorAll('.quiz-opt');
-            const feedback = document.getElementById('quiz-feedback');
-
-            if (isCorrect) {
-                options[optIndex].classList.add('correct');
-                feedback.innerHTML = '<span style="color: #10B981">正解！✓</span>';
-
-                setTimeout(() => {
-                    state.quizStatus[slideIndex][qIndex] = true;
-                    if (checkSlideCompletion(slideIndex)) {
-                        if (!state.completedSlides.includes(slideIndex)) {
-                            state.completedSlides.push(slideIndex);
-                        }
-                    }
-                    saveProgress();
-
-                    if (quizItem) {
-                        quizItem.classList.remove('fade-in');
-                        quizItem.classList.add('fade-out');
-                        setTimeout(() => {
-                            renderSlide(slideIndex);
-                        }, 500);
-                    } else {
-                        renderSlide(slideIndex);
-                    }
-                }, 1000);
-            } else {
-                options[optIndex].classList.add('wrong');
-                if (quizItem) quizItem.classList.add('shake');
-                feedback.innerHTML = '<span style="color: #EF4444">もう一度考えてみよう 💭</span>';
-                setTimeout(() => {
-                    options[optIndex].classList.remove('wrong');
-                    if (quizItem) quizItem.classList.remove('shake');
-                    feedback.innerHTML = '';
-                }, 1000);
-            }
-        }
-
-        function confirmSkip() {
-            if (confirm("このスライドをスキップしますか？ 後で復習できます。")) {
-                if (!state.skippedSlides.includes(state.currentSlide)) {
-                    state.skippedSlides.push(state.currentSlide);
-                }
-                saveProgress();
-            }
-        }
-
-        function handleNextClick() {
-            if (state.currentSlide === SLIDES.length - 1) {
-                startFinalQuiz();
-            } else {
-                goToNextSlide();
-            }
-        }
-
-        function goToNextSlide() {
-            if (state.currentSlide < SLIDES.length - 1) {
-                state.currentSlide++;
-                renderSlide(state.currentSlide);
-                saveProgress();
-            }
-        }
-
-        function goToPrevSlide() {
-            if (state.currentSlide > 0) {
-                state.currentSlide--;
-                renderSlide(state.currentSlide);
-                saveProgress();
-            }
-        }
-
-        function renderDots() {
-            const container = document.getElementById('nav-dots');
-            container.innerHTML = SLIDES.map((_, i) => {
-                let statusClass = '';
-                if (i === state.currentSlide) statusClass = 'active';
-                else if (state.skippedSlides.includes(i)) statusClass = 'skipped';
-                return `<div class="dot ${statusClass}"></div>`;
-            }).join('');
-        }
-
-        let finalQuizState = { current: 0, score: 0, answers: [] };
-
-        function startFinalQuiz() {
-            state.view = 'final-quiz';
-            document.getElementById('slide-view').style.display = 'none';
-            const quizSection = document.getElementById('final-quiz');
-            quizSection.style.display = 'block';
-            finalQuizState = { current: 0, score: 0, answers: [] };
-            renderFinalQuestion();
-            saveProgress();
-        }
-
-        function renderFinalQuestion() {
-            const q = FINAL_QUIZ[finalQuizState.current];
-            const container = document.getElementById('final-quiz');
-            const percent = (finalQuizState.current / FINAL_QUIZ.length) * 100;
-
-            container.innerHTML = `
-                <div class="final-quiz-header">
-                    <div class="welcome-header" style="margin: 0">
-                        <h1>最終確認クイズ</h1>
-                        <p>Unit 1: Windowsセットアップ — 全15問</p>
-                    </div>
-                    <div style="text-align: right">
-                        <span class="unit-label">${finalQuizState.current + 1} / ${FINAL_QUIZ.length}</span>
-                    </div>
-                </div>
-                <div class="final-progress-bar">
-                    <div class="final-progress-fill" style="width: ${percent}%"></div>
-                </div>
-                <div class="continue-card anim-appear" style="flex-direction: column; align-items: flex-start; gap: 24px; margin-top: 32px;">
-                    <h2 style="font-size: 1.8rem;">${q.q}</h2>
-                    <div class="quiz-options" style="flex-direction: column; width: 100%; gap: 12px;">
-                        ${q.options.map((opt, i) => `
-                            <button class="quiz-opt clickable" style="text-align: left; padding: 16px 24px; border-radius: 12px;" onclick="submitFinalAnswer(${i}, this)">${opt}</button>
-                        `).join('')}
-                    </div>
-                    <div id="final-feedback" style="font-weight: 800; font-size: 1.2rem; height: 30px;"></div>
-                </div>
-            `;
-        }
-
-        function submitFinalAnswer(index, btn) {
-            const q = FINAL_QUIZ[finalQuizState.current];
-            const feedback = document.getElementById('final-feedback');
-            const buttons = btn.parentElement.querySelectorAll('button');
-            buttons.forEach(b => b.disabled = true);
-
-            if (index === q.correct) {
-                btn.classList.add('correct');
-                feedback.innerHTML = '<span style="color: #10B981">正解！✓</span>';
-                finalQuizState.score++;
-            } else {
-                btn.classList.add('wrong');
-                feedback.innerHTML = '<span style="color: #EF4444">残念！</span>';
-                finalQuizState.answers.push(finalQuizState.current);
-            }
-
-            setTimeout(() => {
-                if (finalQuizState.current < FINAL_QUIZ.length - 1) {
-                    finalQuizState.current++;
-                    renderFinalQuestion();
-                } else {
-                    showFinalResults();
-                }
-            }, 1000);
-        }
-
-        function showFinalResults() {
-            state.view = 'final-results';
-            document.getElementById('final-quiz').style.display = 'none';
-            const results = document.getElementById('final-results');
-            results.style.display = 'block';
-
-            const passed = finalQuizState.score >= 12;
-            if (passed) {
-                if (!state.completedLessons.includes('pc-basics')) state.completedLessons.push('pc-basics');
-            }
-            saveProgress();
-
-            results.innerHTML = `
-                <div class="results-container">
-                    ${passed ? `
-                        <div class="certificate-card anim-bounce">
-                            <span class="material-symbols-outlined" style="font-size: 5rem; color: #10B981; margin-bottom: 24px;">verified</span>
-                            <h2 class="cert-title">おめでとう！🎉 Unit 1 完了！</h2>
-                            <p style="margin-bottom: 24px;">PC基礎 — Windowsセットアップ修了証</p>
-                            <div class="cert-name">Alba</div>
-                            <div class="cert-info">Score: ${finalQuizState.score} / ${FINAL_QUIZ.length}<br>${new Date().toLocaleDateString()}</div>
-                        </div>
-                        <button class="btn-continue clickable" style="margin: 0 auto;" onclick="showDashboard()">ホームに戻る</button>
-                    ` : `
-                        <h2 style="font-size: 2rem; margin-bottom: 16px;">もう少し！復習してみよう 💪</h2>
-                        <p style="font-size: 1.2rem; color: var(--text-muted);">Score: ${finalQuizState.score} / ${FINAL_QUIZ.length}</p>
-                        <p style="margin-top: 16px;">間違えた内容：</p>
-                        <ul class="review-list">
-                            ${finalQuizState.answers.map(idx => `<li>Slide ${idx + 1}: ${SLIDES[idx].title}</li>`).join('')}
-                        </ul>
-                        <div style="display: flex; gap: 16px; justify-content: center; margin-top: 32px;">
-                            <button class="btn-nav clickable" onclick="startFinalQuiz()">もう一度挑戦する</button>
-                            <button class="btn-continue clickable" onclick="startLearning()">スライドを復習する</button>
-                        </div>
-                    `}
-                </div>
-            `;
-        }
-
-        window.onload = loadProgress;
-
-    </script>
 
     <div id="home-modal" class="modal-overlay">
         <div class="modal-content">
-            <h2 style="margin-bottom: 16px;">レッスンを中断しますか？<br>Leave lesson?</h2>
-            <p style="color: #666; margin-bottom: 24px;">進捗は保存されます。<br>Progress will be saved.</p>
+            <h2 style="margin-bottom:16px;">レッスンを中断しますか？<br>Leave lesson?</h2>
+            <p style="color:#666; margin-bottom:24px;">進捗は保存されます。<br>Progress will be saved.</p>
             <div class="modal-btns">
                 <button class="btn-modal btn-continue-modal" onclick="closeModal()">続ける / Continue</button>
                 <button class="btn-modal btn-home-confirm" onclick="confirmGoHome()">ホームへ / Go Home</button>
             </div>
         </div>
     </div>
+
+    <script>
+    const CATEGORIES = [
+        { id:'basics', icon:'💻', title:'Computer Basics', subtitle:'コンピューター基礎', unlocked:true,
+          lessons:[{id:'pc-basics',title:'PC Basics',subtitle:'PC基礎',totalSlides:18,unlocked:true},{id:'file-mgmt',title:'File Management',subtitle:'ファイル管理',unlocked:false},{id:'internet',title:'Internet Basics',subtitle:'インターネット基礎',unlocked:false}]},
+        { id:'cloud', icon:'☁️', title:'Cloud & Storage', subtitle:'クラウド & ストレージ', unlocked:false,
+          lessons:[{id:'onedrive',title:'OneDrive',unlocked:false},{id:'gdrive',title:'Google Drive',unlocked:false},{id:'backup',title:'Backup',unlocked:false}]},
+        { id:'security', icon:'🔒', title:'Security', subtitle:'セキュリティ', unlocked:false,
+          lessons:[{id:'passwords',title:'Password Management',unlocked:false},{id:'browsing',title:'Safe Browsing',unlocked:false},{id:'phishing',title:'Phishing',unlocked:false}]},
+        { id:'uni', icon:'🎓', title:'University Life', subtitle:'大学生活', unlocked:false,
+          lessons:[{id:'word',title:'Word & OneNote',unlocked:false},{id:'writing',title:'Report Writing',unlocked:false},{id:'comm',title:'Zoom & Teams',unlocked:false}]},
+        { id:'ai', icon:'🤖', title:'AI Introduction', subtitle:'AI入門', unlocked:false,
+          lessons:[{id:'what-ai',title:'What is AI?',unlocked:false},{id:'chatgpt',title:'Using ChatGPT',unlocked:false},{id:'claude',title:'Using Claude',unlocked:false},{id:'study-ai',title:'Studying with AI',unlocked:false}]},
+        { id:'trouble', icon:'🛠️', title:'Troubleshooting', subtitle:'トラブルシューティング', unlocked:false,
+          lessons:[{id:'remote',title:'Remote Support',unlocked:false},{id:'common',title:'Common Problems',unlocked:false}]}
+    ];
+
+    const SLIDES = [
+        { unit:'UNIT 1 · PC SETUP', title:'Windowsパソコン基礎ガイドへようこそ！', subtitle:'Welcome to the Windows PC Basics Guide',
+          content:`<p>今日から一緒に、新しいパソコンの使い方をマスターしていきましょう。</p><p><strong>学習する18のステップ：</strong></p><ul><li>パソコンの起動と初期設定</li><li>MicrosoftアカウントとPINの設定</li><li>デスクトップと学校アカウントの追加</li><li>ファイル管理とOneDriveクラウド同期</li><li>スマホとの連携とセキュリティ</li><li>困った時のリモートサポート</li></ul>`,
+          emoji:'💻 ☁️ 📱', emojiClass:'anim-float', caption:'パソコン・クラウド・スマホが連携！', quiz:null, buttonText:'始めましょう！→' },
+        { unit:'UNIT 1 · PC SETUP', title:'パソコンを初めて起動しよう', subtitle:'Turning on your PC for the first time',
+          content:`<p><strong>やってみよう（Do this now）：</strong></p><ol><li>パソコンの電源ボタンを押す</li><li>Windowsのロゴが画面に表示されるのを待つ</li><li>セットアップ画面が表示される</li></ol><p>※ 初回起動には数分かかる場合があります。焦らず待ちましょう。</p>`,
+          emoji:'⚡ 💻', emojiClass:'anim-power', caption:'電源を入れて起動しよう！',
+          quiz:{ questions:[{ id:'s2q1', q:'Q1: パソコンを起動するにはどうすればいいですか？', options:[{text:'電源ボタンを押す',correct:true},{text:'キーボードのEnterキーを押す',correct:false},{text:'マウスをクリックする',correct:false}] }] } },
+        { unit:'UNIT 1 · PC SETUP', title:'Windowsの初期設定をしよう', subtitle:'Setting up Windows for the first time',
+          content:`<p><strong>やってみよう：</strong></p><ol><li>言語を選択する → 「日本語」を選ぶ</li><li>地域を選択する → 「日本」を選ぶ</li><li>キーボードレイアウトを選ぶ → 「Microsoft IME」</li><li>インターネットに接続する → Wi-Fiを選んでパスワードを入力</li></ol>`,
+          emoji:'🌍 ⌨️ 📶', emojiClass:'anim-pulse', caption:'言語・地域・Wi-Fiを設定しよう',
+          quiz:{ questions:[{ id:'s3q1', q:'Q1: 初期設定で最初に選ぶものは何ですか？', options:[{text:'言語',correct:true},{text:'パスワード',correct:false},{text:'アプリ',correct:false}] }] } },
+        { unit:'UNIT 1 · PC SETUP', title:'個人用Microsoftアカウントでサインイン', subtitle:'Sign in with your personal Microsoft account',
+          content:`<p><strong>やってみよう：</strong></p><ol><li>「Microsoftアカウントでサインイン」を選ぶ</li><li>個人用メールアドレスを入力する</li><li>パスワードを入力する</li><li>本人確認のコードが届いたら入力する</li><li>サインイン完了！</li></ol><p>アカウントがない場合：「作成する」をクリックして新規作成。</p>`,
+          emoji:'👤 🔑 ✅', emojiClass:'anim-appear', caption:'Microsoftアカウントでサインイン',
+          quiz:{ questions:[{ id:'s4q1', q:'Q1: Microsoftアカウントでサインインするには何が必要ですか？', options:[{text:'メールアドレスとパスワード',correct:true},{text:'クレジットカード番号',correct:false},{text:'電話番号のみ',correct:false}] }] } },
+        { unit:'UNIT 1 · PC SETUP', title:'PINコードを設定しよう', subtitle:'Set up a PIN for faster, safer login',
+          content:`<p><strong>PINコードとは？</strong><br>パスワードの代わりに使える数字のコード。このパソコンだけで使える、より安全な方法です。</p><p><strong>やってみよう：</strong></p><ol><li>「PINを作成する」をクリック</li><li>6桁以上の数字を入力する</li><li>もう一度同じ数字を入力して確認</li><li>「OK」をクリックして完了</li></ol><p>※ 誕生日や「123456」は使わないこと！</p>`,
+          emoji:'🔢 🔒', emojiClass:'anim-bounce', caption:'PINコードでより安全に！',
+          quiz:{ questions:[{ id:'s5q1', q:'Q1: PINコードとは何ですか？', options:[{text:'このパソコンだけで使える数字のログインコード',correct:true},{text:'インターネットのパスワード',correct:false},{text:'Wi-Fiのパスワード',correct:false}] }] } },
+        { unit:'UNIT 1 · PC SETUP', title:'デスクトップを見てみよう', subtitle:'Understanding what you see on screen',
+          content:`<p><strong>画面に表示されているものを確認しよう：</strong></p><ul><li><strong>デスクトップ：</strong>作業台。ファイルやショートカットを置ける場所</li><li><strong>タスクバー：</strong>画面下部の帯。よく使うアプリが並ぶ</li><li><strong>スタートメニュー：</strong>左下のWindowsマーク</li><li><strong>通知エリア：</strong>右下。時計・音量・Wi-Fi・OneDriveアイコン</li><li><strong>ファイルエクスプローラー：</strong>タスクバーのフォルダアイコン</li></ul>`,
+          emoji:'🖥️', emojiClass:'anim-float', caption:'デスクトップの各エリア',
+          quiz:{ questions:[
+            { id:'s6q1', q:'Q1: タスクバーはどこにありますか？', options:[{text:'画面の下部',correct:true},{text:'画面の左側',correct:false},{text:'画面の上部',correct:false}] },
+            { id:'s6q2', q:'Q2: スタートメニューを開くにはどうすればいいですか？', options:[{text:'左下のWindowsマークをクリック',correct:true},{text:'画面右上をクリック',correct:false},{text:'F1キーを押す',correct:false}] }
+          ]} },
+        { unit:'UNIT 1 · PC SETUP', title:'学校アカウントを追加しよう', subtitle:'Adding your university account to Windows',
+          content:`<p><strong>重要：新しいWindowsユーザーを作る必要はありません！</strong></p><p><strong>やってみよう：</strong></p><ol><li>スタートメニュー → 「設定」（歯車アイコン）</li><li>「アカウント」をクリック</li><li>「職場または学校にアクセスする」を選択</li><li>「接続」ボタンをクリック</li><li>大学のメールアドレスを入力（例：s123456@university.ac.jp）</li><li>大学のパスワードを入力 → サインイン完了！</li></ol>`,
+          emoji:'⚙️', emojiClass:'anim-spin', caption:'設定から学校アカウントを追加',
+          quiz:{ questions:[
+            { id:'s7q1', q:'Q1: 学校アカウントを追加するとき、新しいWindowsユーザーは必要？', options:[{text:'いいえ、同じユーザー内で追加できる',correct:true},{text:'はい、必ず作る必要がある',correct:false},{text:'大学のIT部門に依頼する必要がある',correct:false}] },
+            { id:'s7q2', q:'Q2: 学校アカウントを追加する設定はどこにありますか？', options:[{text:'設定 → アカウント → 職場または学校にアクセスする',correct:true},{text:'設定 → システム → ディスプレイ',correct:false},{text:'コントロールパネル → プリンター',correct:false}] }
+          ]} },
+        { unit:'UNIT 1 · PC SETUP', title:'2つのアカウントが設定できたか確認しよう', subtitle:'Confirming both accounts are working',
+          content:`<p><strong>やってみよう — 確認方法：</strong></p><ol><li>設定 → アカウント → 「あなたの情報」を開く</li><li>個人用Microsoftアカウントが表示されているか確認</li><li>設定 → アカウント → 「職場または学校にアクセスする」を開く</li><li>大学のアカウントが表示されているか確認</li></ol><p><strong>2つのアカウントの違い：</strong><br>個人 → プライベートなファイル用<br>学校 → 大学の課題・レポート用<br>→ ファイルは完全に分離されます！</p>`,
+          emoji:'💙 💚', emojiClass:'anim-pulse', caption:'2つのアカウントが設定完了！',
+          quiz:{ questions:[{ id:'s8q1', q:'Q1: 個人アカウントと学校アカウントのファイルはどうなっていますか？', options:[{text:'完全に分離されている',correct:true},{text:'自動的に混ざる',correct:false},{text:'同じフォルダに保存される',correct:false}] }] } },
+        { unit:'UNIT 1 · PC SETUP', title:'ファイルエクスプローラーを開いてみよう', subtitle:'Opening and understanding File Explorer',
+          content:`<p><strong>やってみよう：</strong><br>タスクバーのフォルダアイコンをクリックして開く</p><p><strong>画面の見かた：</strong></p><ul><li><strong>左側パネル：</strong>よく使う場所へ素早くアクセス</li><li><strong>右側メインエリア：</strong>ファイルとフォルダが表示される</li><li><strong>上部アドレスバー：</strong>今どのフォルダにいるかがわかる</li><li><strong>上部リボン：</strong>コピー・移動・削除などの操作</li></ul>`,
+          emoji:'📂 📄', emojiClass:'anim-float', caption:'ファイルエクスプローラーを開こう',
+          quiz:{ questions:[{ id:'s9q1', q:'Q1: ファイルエクスプローラーを開くにはどうすればいいですか？', options:[{text:'タスクバーのフォルダアイコンをクリック',correct:true},{text:'インターネットブラウザを開く',correct:false},{text:'スタートメニューからWordを開く',correct:false}] }] } },
+        { unit:'UNIT 1 · PC SETUP', title:'フォルダの構造を見てみよう', subtitle:'Understanding the folder hierarchy',
+          content:`<p><strong>左側パネルに表示される構造を確認しよう：</strong></p><ul><li>💻 PC（パソコン全体）<ul><li>📁 ドキュメント（ローカル保存）</li><li>📁 ダウンロード（ローカル保存）</li><li>☁️ OneDrive - Personal（個人用クラウド）</li><li>☁️ OneDrive - 大学名（学校用クラウド）</li></ul></li></ul><p>ポイント：2つのOneDriveが別々に表示される！</p>`,
+          emoji:'💻 📁 ☁️', emojiClass:'anim-pulse', caption:'フォルダの構造を理解しよう',
+          quiz:{ questions:[{ id:'s10q1', q:'Q1: ファイルエクスプローラーで学校用OneDriveはどう表示されますか？', options:[{text:'「OneDrive - 大学名」として表示される',correct:true},{text:'「マイドキュメント」として表示される',correct:false},{text:'「Cドライブ」の中に隠れている',correct:false}] }] } },
+        { unit:'UNIT 1 · PC SETUP', title:'クラウドとは何か？', subtitle:'Understanding cloud storage',
+          content:`<p>クラウド＝インターネット上の大きなコンピュータにファイルを保存すること</p><p><strong>PC内（ローカル）：</strong><br>✓ インターネット不要<br>✗ そのPCでしか見られない<br>✗ PCが壊れるとファイルを失う可能性</p><p><strong>クラウド（OneDrive）：</strong><br>✓ どこからでも見られる<br>✓ PCが壊れてもファイルは安全<br>✗ インターネット接続が必要</p>`,
+          emoji:'☁️', emojiClass:'anim-pulse', caption:'クラウドはどこからでもアクセス可能',
+          quiz:{ questions:[{ id:'s11q1', q:'Q1: クラウドストレージの最大のメリットは？', options:[{text:'PCが壊れてもファイルが安全に守られる',correct:true},{text:'パソコンが速くなる',correct:false},{text:'インターネットなしで使える',correct:false}] }] } },
+        { unit:'UNIT 1 · PC SETUP', title:'OneDriveの仕組み', subtitle:'How automatic sync works',
+          content:`<p>OneDriveフォルダに保存するだけ！あとは自動！</p><p><strong>仕組み：</strong></p><ol><li>OneDriveフォルダにファイルを保存する</li><li>インターネットに接続されると自動アップロード</li><li>スマホ・タブレットにも自動的に反映される</li><li>どのデバイスで変更しても全デバイスに反映</li></ol><p><strong>やってみよう：</strong><br>「OneDrive - Personal」フォルダを開いて中を見てみよう</p>`,
+          emoji:'🔄', emojiClass:'anim-spin', caption:'自動的に同期されます！',
+          quiz:{ questions:[{ id:'s12q1', q:'Q1: OneDriveに保存したファイルはいつ同期されますか？', options:[{text:'インターネットに接続されている時に自動的に',correct:true},{text:'毎週月曜日に自動的に',correct:false},{text:'手動でボタンを押した時だけ',correct:false}] }] } },
+        { unit:'UNIT 1 · PC SETUP', title:'スマホでOneDriveを使おう', subtitle:'Access your files anywhere on your phone',
+          content:`<p><strong>やってみよう（スマホで）：</strong></p><ol><li>App Store または Google Playを開く</li><li>「OneDrive」で検索してインストール（無料）</li><li>個人のMicrosoftアカウントでサインインする</li><li>PCのOneDriveフォルダのファイルが表示される！</li><li>学校アカウントも追加でサインイン可能</li></ol><p>便利機能：カメラのバックアップをオンにすると写真が自動でPCにも届く！</p>`,
+          emoji:'📱 ☁️', emojiClass:'anim-bounce', caption:'スマホからいつでもアクセス！',
+          quiz:{ questions:[
+            { id:'s13q1', q:'Q1: スマホのOneDriveアプリはいくらですか？', options:[{text:'無料',correct:true},{text:'月額500円',correct:false},{text:'PCを購入した時だけ無料',correct:false}] },
+            { id:'s13q2', q:'Q2: スマホで撮った写真をPCでも見るには？', options:[{text:'OneDriveの自動バックアップ機能を使う',correct:true},{text:'USBケーブルでPCと接続する',correct:false},{text:'メールで自分に送る',correct:false}] }
+          ]} },
+        { unit:'UNIT 1 · PC SETUP', title:'OneDriveアイコンを理解しよう', subtitle:'What the sync status icons mean',
+          content:`<p>タスクバー右下のOneDriveアイコンを確認しよう：</p><ul><li>✅ <strong>青いチェック：</strong>同期完了</li><li>🔄 <strong>矢印（円形）：</strong>同期中</li><li>❌ <strong>赤いバツ：</strong>エラー（接続確認）</li><li>⚪ <strong>白いアイコン：</strong>クラウドのみ</li><li>☁️ <strong>雲マーク：</strong>正常動作中</li></ul>`,
+          emoji:'✅ 🔄 ❌', emojiClass:'anim-appear', caption:'アイコンで同期状態がわかる',
+          quiz:{ questions:[{ id:'s14q1', q:'Q1: 青いチェックマークのアイコンは何を意味しますか？', options:[{text:'同期完了。クラウドとPCの両方に最新版がある',correct:true},{text:'ファイルにエラーがある',correct:false},{text:'アップロード中',correct:false}] }] } },
+        { unit:'UNIT 1 · PC SETUP', title:'Wordでのアカウント切替', subtitle:'Using the right account in Office apps',
+          content:`<p>保存先はアカウントによって変わります！</p><ul><li><strong>個人アカウント：</strong>OneDrive - Personal に保存</li><li><strong>学校アカウント：</strong>OneDrive - 大学名 に保存</li></ul><p><strong>やってみよう：</strong><br>Wordを開く → 右上のアカウントアイコンを確認。「ファイル」→「アカウント」から切り替えできます。</p><p>ルール：大学の課題は必ず学校アカウントで保存！</p>`,
+          emoji:'📝 🔄', emojiClass:'anim-spin', caption:'アカウントを切り替えて保存先を選ぶ',
+          quiz:{ questions:[{ id:'s15q1', q:'Q1: Wordで学校アカウントを使って保存するとどこに保存されますか？', options:[{text:'学校用OneDrive（OneDrive - 大学名）に保存される',correct:true},{text:'デスクトップに自動保存される',correct:false},{text:'個人用OneDriveに保存される',correct:false}] }] } },
+        { unit:'UNIT 1 · PC SETUP', title:'パスワード管理', subtitle:'Keeping your accounts secure',
+          content:`<p><strong>パスワードの5つのルール：</strong></p><ol><li>個人と学校は必ず別々のパスワードを使う</li><li>8文字以上で数字・記号を含める（例：MyPC2024!）</li><li>誰にも教えない</li><li>忘れた場合は「パスワードを忘れた場合」から回復</li><li>PCを離れるとき → <strong>Windowsキー + L</strong> でロック！</li></ol><p><strong>やってみよう：</strong><br>今すぐ Windowsキー + L を押してみよう！</p>`,
+          emoji:'🔒 ⚠️', emojiClass:'anim-pulse', caption:'パスワードは安全に管理しよう！',
+          quiz:{ questions:[
+            { id:'s16q1', q:'Q1: PCをすぐにロックするショートカットは？', options:[{text:'Windowsキー + L',correct:true},{text:'Ctrl + Alt + Delete',correct:false},{text:'Ctrl + S',correct:false}] },
+            { id:'s16q2', q:'Q2: パスワードは個人と学校で？', options:[{text:'それぞれ別々のパスワードを使う',correct:true},{text:'同じパスワードにする',correct:false},{text:'パスワードを設定しない',correct:false}] }
+          ]} },
+        { unit:'UNIT 1 · PC SETUP', title:'Quick Assist / Remote Support', subtitle:'How to get remote help from a trusted person',
+          content:`<p>Quick Assist＝Windowsに最初から入っている無料ツール。お父さんが遠くから画面を見て手伝える！</p><p><strong>やってみよう：</strong></p><ol><li><strong>Windowsキー + Ctrl + Q</strong> を押す</li><li>「サポートを受ける」をクリック</li><li>お父さんが送ってくれた6桁のコードを入力</li><li>「許可」をクリック</li><li>終わったら「セッションを終了」</li></ol><p>⚠️ 信頼できる家族以外とは絶対に共有しないこと！</p>`,
+          emoji:'💻 🤝 💻', emojiClass:'anim-pulse', caption:'離れた場所からサポート！',
+          quiz:{ questions:[
+            { id:'s17q1', q:'Q1: Quick Assistを開くショートカットは？', options:[{text:'Windowsキー + Ctrl + Q',correct:true},{text:'Ctrl + Alt + Delete',correct:false},{text:'F12キー',correct:false}] },
+            { id:'s17q2', q:'Q2: Quick Assistのセッションを共有していい相手は？', options:[{text:'信頼できる家族や友人のみ',correct:true},{text:'誰でもOK',correct:false},{text:'インターネットで知り合った人',correct:false}] }
+          ]} },
+        { unit:'UNIT 1 · PC SETUP', title:'まとめ — セットアップ完了！', subtitle:"You've completed the Windows PC setup!",
+          content:`<p><strong>完了した項目：</strong></p><ul><li>✅ パソコンの起動と初期設定</li><li>✅ アカウント設定とPINコード</li><li>✅ 学校アカウントの追加</li><li>✅ ファイル管理とOneDrive同期</li><li>✅ スマホ連携とセキュリティ</li><li>✅ リモートサポートの準備</li></ul>`,
+          emoji:'🎉 🏆 ⭐', emojiClass:'anim-bounce', caption:'セットアップ完了！おめでとう！', quiz:null, buttonText:'最終クイズに挑戦！🎯' }
+    ];
+
+    const FINAL_QUIZ = [
+        { q:'パソコンを起動するにはどうすればいいですか？', options:['電源ボタンを押す','Enterキーを押す','マウスをクリックする'], correct:0 },
+        { q:'PINコードとは何ですか？', options:['このパソコンだけで使える数字のログインコード','インターネットのパスワード','Wi-Fiのパスワード'], correct:0 },
+        { q:'学校アカウントを追加するとき新しいWindowsユーザーは必要？', options:['いいえ','はい','場合による'], correct:0 },
+        { q:'タスクバーはどこにありますか？', options:['画面の下部','画面の左側','画面の上部'], correct:0 },
+        { q:'ファイルエクスプローラーを開くには？', options:['タスクバーのフォルダアイコン','インターネットブラウザ','Wordアイコン'], correct:0 },
+        { q:'2つのOneDriveフォルダはどう表示されますか？', options:['ファイルエクスプローラーで別々に表示される','同じフォルダの中に入っている','デスクトップにある'], correct:0 },
+        { q:'クラウド保存の最大のメリットは？', options:['PCが壊れてもファイルが安全','パソコンが速くなる','インターネット不要で使える'], correct:0 },
+        { q:'OneDriveのファイルはいつ同期されますか？', options:['インターネット接続中に自動的に','毎朝6時に','手動のみ'], correct:0 },
+        { q:'スマホのOneDriveアプリは？', options:['無料','有料','PCを買った人だけ無料'], correct:0 },
+        { q:'青いチェックマークのOneDriveアイコンの意味は？', options:['同期完了','エラー','アップロード中'], correct:0 },
+        { q:'Wordで学校の課題はどのアカウントで保存すべき？', options:['学校アカウント（OneDrive - 大学名）','個人アカウント','どちらでもいい'], correct:0 },
+        { q:'PCをすぐロックするショートカットは？', options:['Windowsキー + L','Ctrl + S','F12'], correct:0 },
+        { q:'Quick Assistのショートカットは？', options:['Windowsキー + Ctrl + Q','F12','Alt + Tab'], correct:0 },
+        { q:'Quick Assistは誰と使うべきですか？', options:['信頼できる家族のみ','誰でもOK','大学の先生のみ'], correct:0 },
+        { q:'個人アカウントと学校アカウントのファイルは？', options:['完全に分離されている','混ざる','毎週同期される'], correct:0 }
+    ];
+
+    let state = {
+        currentSlide: 0, completedSlides: [], completedLessons: [],
+        skippedSlides: [], quizStatus: {}, view: 'dashboard',
+        sidebarCollapsed: false, quizCollapsed: false
+    };
+
+    function saveProgress() {
+        localStorage.setItem('alba-pc-progress', JSON.stringify(state));
+        updateOverallProgress();
+    }
+
+    function loadProgress() {
+        const saved = localStorage.getItem('alba-pc-progress');
+        if (saved) { try { state = { ...state, ...JSON.parse(saved) }; } catch(e) {} }
+
+        const sidebarSaved = localStorage.getItem('alba-sidebar');
+        if (sidebarSaved !== null) state.sidebarCollapsed = sidebarSaved === 'true';
+
+        if (state.sidebarCollapsed) {
+            document.getElementById('sidebar').classList.add('collapsed');
+            document.getElementById('toggle-icon').innerText = '→';
+        }
+
+        renderSidebar();
+        renderDashboard();
+        updateOverallProgress();
+
+        if (state.view === 'slide') startLearning();
+        else if (state.view === 'final-quiz') startFinalQuiz();
+        else showDashboard();
+    }
+
+    function toggleSidebar() {
+        state.sidebarCollapsed = !state.sidebarCollapsed;
+        document.getElementById('sidebar').classList.toggle('collapsed', state.sidebarCollapsed);
+        document.getElementById('toggle-icon').innerText = state.sidebarCollapsed ? '→' : '←';
+        localStorage.setItem('alba-sidebar', state.sidebarCollapsed);
+    }
+
+    function toggleQuiz() {
+        state.quizCollapsed = !state.quizCollapsed;
+        document.getElementById('quiz-strip').classList.toggle('collapsed', state.quizCollapsed);
+        document.getElementById('quiz-toggle-icon').innerText = state.quizCollapsed ? 'expand_less' : 'expand_more';
+    }
+
+    function confirmReset() {
+        if (confirm('本当にリセットしますか？すべての進捗が消えます。')) {
+            localStorage.removeItem('alba-pc-progress');
+            location.reload();
+        }
+    }
+
+    function renderSidebar() {
+        const container = document.getElementById('sidebar-nav-container');
+        const homeActive = state.view === 'dashboard' ? 'active' : '';
+        let html = `<div class="home-link ${homeActive}" onclick="goHome()">
+            <span class="material-symbols-outlined">home</span>
+            <div class="home-info"><span class="home-title">Home</span><span class="home-subtitle">ホーム</span></div>
+        </div>`;
+        html += CATEGORIES.map(cat => `
+            <div class="category-item ${cat.id === 'basics' ? 'open' : ''}">
+                <button class="category-header" onclick="toggleCategory(this)">
+                    <span style="font-size:1.2rem">${cat.icon}</span>
+                    <div class="category-info">
+                        <span class="cat-title">${cat.title}</span>
+                        <span class="cat-subtitle">${cat.subtitle}</span>
+                    </div>
+                    <span class="material-symbols-outlined chevron">expand_more</span>
+                </button>
+                <div class="category-lessons">
+                    ${(cat.lessons||[]).map(lesson => {
+                        const done = state.completedLessons.includes(lesson.id);
+                        const active = state.view === 'slide' && lesson.id === 'pc-basics' ? 'active' : '';
+                        return `<a class="lesson-link ${active}" onclick="lesson.unlocked ? startLearning() : null">
+                            <span class="material-symbols-outlined status-icon ${done ? 'status-check' : 'status-locked'}">${done ? 'check_circle' : 'lock'}</span>
+                            ${lesson.title}
+                        </a>`;
+                    }).join('')}
+                </div>
+            </div>`).join('');
+        container.innerHTML = html;
+    }
+
+    function toggleCategory(btn) { btn.parentElement.classList.toggle('open'); }
+
+    function renderDashboard() {
+        const container = document.getElementById('category-grid-container');
+        container.innerHTML = CATEGORIES.map(cat => {
+            const total = cat.lessons ? cat.lessons.length : 0;
+            const done = cat.lessons ? cat.lessons.filter(l => state.completedLessons.includes(l.id)).length : 0;
+            const pct = total > 0 ? Math.round((done/total)*100) : 0;
+            return `<div class="cat-card ${cat.unlocked ? '' : 'locked'}" onclick="${cat.unlocked ? 'startLearning()' : ''}">
+                <div class="cat-card-header">
+                    <span class="cat-card-icon">${cat.icon}</span>
+                    <div class="cat-card-titles">
+                        <span class="cat-card-title">${cat.title}</span>
+                        <span class="cat-card-subtitle">${cat.subtitle}</span>
+                    </div>
+                </div>
+                <div class="cat-card-footer">
+                    <div class="cat-stats"><span>${done}/${total} Lessons</span><span>${pct}%</span></div>
+                    <div class="progress-bar-bg" style="background:#eee">
+                        <div class="progress-bar-fill" style="width:${pct}%;background:var(--secondary)"></div>
+                    </div>
+                    ${!cat.unlocked ? '<span class="badge-locked">🔒 Coming Soon</span>' : ''}
+                </div>
+            </div>`;
+        }).join('');
+
+        const s = SLIDES[state.currentSlide];
+        document.getElementById('continue-slide-title').innerText = s.title;
+        document.getElementById('continue-slide-desc').innerText = s.subtitle;
+    }
+
+    function updateOverallProgress() {
+        const pct = Math.round((state.completedSlides.length / SLIDES.length) * 100);
+        document.getElementById('overall-progress-text').innerText = `Alba's Progress ${pct}%`;
+        document.getElementById('overall-progress-fill').style.width = `${pct}%`;
+    }
+
+    function showDashboard() {
+        state.view = 'dashboard';
+        document.getElementById('dashboard').style.display = 'block';
+        document.getElementById('slide-view').style.display = 'none';
+        document.getElementById('final-quiz').style.display = 'none';
+        document.getElementById('final-results').style.display = 'none';
+        renderSidebar();
+        renderDashboard();
+        saveProgress();
+    }
+
+    function startLearning() {
+        state.view = 'slide';
+        document.getElementById('dashboard').style.display = 'none';
+        document.getElementById('slide-view').style.display = 'flex';
+        document.getElementById('final-quiz').style.display = 'none';
+        document.getElementById('final-results').style.display = 'none';
+        renderSlide(state.currentSlide);
+        renderSidebar();
+        saveProgress();
+    }
+
+    function goHome() {
+        if (state.view === 'slide') {
+            document.getElementById('home-modal').style.display = 'flex';
+        } else {
+            showDashboard();
+        }
+    }
+
+    function closeModal() { document.getElementById('home-modal').style.display = 'none'; }
+    function confirmGoHome() { closeModal(); showDashboard(); }
+
+    function renderSlide(index) {
+        const slide = SLIDES[index];
+        document.getElementById('top-bar-unit').innerText = slide.unit;
+        document.getElementById('top-bar-counter').innerText = `SLIDE ${index+1} / ${SLIDES.length}`;
+        document.getElementById('current-slide-title').innerText = slide.title;
+        document.getElementById('current-slide-subtitle').innerText = slide.subtitle;
+        document.getElementById('current-slide-content').innerHTML = slide.content;
+
+        const emojiEl = document.getElementById('current-slide-emoji');
+        emojiEl.innerText = slide.emoji || '';
+        emojiEl.className = 'visual-emoji ' + (slide.emojiClass || '');
+        document.getElementById('current-slide-caption').innerText = slide.caption || '';
+
+        const quizStrip = document.getElementById('quiz-strip');
+        const quizBody = document.getElementById('quiz-body');
+        document.getElementById('quiz-feedback').innerHTML = '';
+
+        if (slide.quiz) {
+            quizStrip.classList.remove('hidden');
+            if (state.quizCollapsed) quizStrip.classList.add('collapsed');
+            else quizStrip.classList.remove('collapsed');
+
+            if (!state.quizStatus[index]) state.quizStatus[index] = {};
+            let currentQIdx = 0;
+            for (let i = 0; i < slide.quiz.questions.length; i++) {
+                if (state.quizStatus[index][i]) currentQIdx = i + 1;
+                else { currentQIdx = i; break; }
+            }
+
+            if (currentQIdx >= slide.quiz.questions.length) {
+                quizBody.innerHTML = `<div><p class="quiz-question">このスライドのクイズはすべて完了しました！✓</p></div>`;
+            } else {
+                const q = slide.quiz.questions[currentQIdx];
+                quizBody.innerHTML = `
+                    <div class="quiz-item" id="q-${index}-${currentQIdx}">
+                        <p class="quiz-question">${q.q}</p>
+                        <div class="quiz-options">
+                            ${q.options.map((opt,oIdx) => `
+                                <button class="quiz-opt" onclick="checkAnswer(${index},${currentQIdx},${oIdx},${opt.correct})">${opt.text}</button>
+                            `).join('')}
+                        </div>
+                    </div>`;
+            }
+        } else {
+            quizStrip.classList.add('hidden');
+        }
+
+        updateNavButtons(index);
+        renderDots();
+    }
+
+    function checkSlideCompletion(index) {
+        const slide = SLIDES[index];
+        if (!slide.quiz) return true;
+        if (state.skippedSlides.includes(index)) return true;
+        const status = state.quizStatus[index] || {};
+        return slide.quiz.questions.every((_,qIdx) => status[qIdx] === true);
+    }
+
+    function updateNavButtons(index) {
+        const slide = SLIDES[index];
+        const done = checkSlideCompletion(index);
+        document.getElementById('btn-prev').disabled = index === 0;
+        const nextBtn = document.getElementById('btn-next');
+        const nextText = document.getElementById('next-btn-text');
+        nextBtn.classList.remove('pulse');
+
+        if (index === SLIDES.length - 1) {
+            nextText.innerText = slide.buttonText || '最終クイズへ';
+            nextBtn.disabled = !done && !!slide.quiz;
+        } else {
+            nextText.innerText = slide.buttonText || '次のスライドへ';
+            nextBtn.disabled = !!slide.quiz && !done && !state.skippedSlides.includes(index);
+        }
+        if (!nextBtn.disabled) nextBtn.classList.add('pulse');
+    }
+
+    function checkAnswer(slideIndex, qIndex, optIndex, isCorrect) {
+        const quizItem = document.getElementById(`q-${slideIndex}-${qIndex}`);
+        const options = quizItem ? quizItem.querySelectorAll('.quiz-opt') : [];
+        const feedback = document.getElementById('quiz-feedback');
+
+        if (isCorrect) {
+            if (options[optIndex]) options[optIndex].classList.add('correct');
+            feedback.innerHTML = '<span style="color:#10B981">正解！✓</span>';
+            setTimeout(() => {
+                if (!state.quizStatus[slideIndex]) state.quizStatus[slideIndex] = {};
+                state.quizStatus[slideIndex][qIndex] = true;
+                if (checkSlideCompletion(slideIndex) && !state.completedSlides.includes(slideIndex)) {
+                    state.completedSlides.push(slideIndex);
+                }
+                saveProgress();
+                renderSlide(slideIndex);
+            }, 1000);
+        } else {
+            if (options[optIndex]) options[optIndex].classList.add('wrong');
+            if (quizItem) quizItem.classList.add('shake');
+            feedback.innerHTML = '<span style="color:#EF4444">もう一度考えてみよう 💭</span>';
+            setTimeout(() => {
+                if (options[optIndex]) options[optIndex].classList.remove('wrong');
+                if (quizItem) quizItem.classList.remove('shake');
+                feedback.innerHTML = '';
+            }, 1000);
+        }
+    }
+
+    function confirmSkip() {
+        if (confirm('このスライドをスキップしますか？後で復習できます。')) {
+            if (!state.skippedSlides.includes(state.currentSlide)) state.skippedSlides.push(state.currentSlide);
+            saveProgress();
+            renderSlide(state.currentSlide);
+        }
+    }
+
+    function handleNextClick() {
+        if (state.currentSlide === SLIDES.length - 1) startFinalQuiz();
+        else goToNextSlide();
+    }
+
+    function goToNextSlide() {
+        if (state.currentSlide < SLIDES.length - 1) {
+            state.currentSlide++;
+            renderSlide(state.currentSlide);
+            saveProgress();
+        }
+    }
+
+    function goToPrevSlide() {
+        if (state.currentSlide > 0) {
+            state.currentSlide--;
+            renderSlide(state.currentSlide);
+            saveProgress();
+        }
+    }
+
+    function renderDots() {
+        document.getElementById('nav-dots').innerHTML = SLIDES.map((_,i) => {
+            let cls = '';
+            if (i === state.currentSlide) cls = 'active';
+            else if (state.skippedSlides.includes(i)) cls = 'skipped';
+            return `<div class="dot ${cls}"></div>`;
+        }).join('');
+    }
+
+    let finalQuizState = { current:0, score:0, answers:[] };
+
+    function startFinalQuiz() {
+        state.view = 'final-quiz';
+        document.getElementById('slide-view').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'none';
+        document.getElementById('final-results').style.display = 'none';
+        const fq = document.getElementById('final-quiz');
+        fq.style.display = 'block';
+        finalQuizState = { current:0, score:0, answers:[] };
+        renderFinalQuestion();
+        saveProgress();
+    }
+
+    function renderFinalQuestion() {
+        const q = FINAL_QUIZ[finalQuizState.current];
+        const pct = (finalQuizState.current / FINAL_QUIZ.length) * 100;
+        document.getElementById('final-quiz').innerHTML = `
+            <div style="max-width:800px;margin:0 auto">
+                <div class="final-quiz-header">
+                    <div><h1 style="font-size:2rem;font-weight:800;color:var(--primary)">最終確認クイズ</h1>
+                    <p style="color:var(--text-muted)">Unit 1: Windowsセットアップ — 全15問</p></div>
+                    <span class="unit-label">${finalQuizState.current+1} / ${FINAL_QUIZ.length}</span>
+                </div>
+                <div class="final-progress-bar"><div class="final-progress-fill" style="width:${pct}%"></div></div>
+                <div class="continue-card" style="flex-direction:column;align-items:flex-start;gap:20px;margin-top:32px">
+                    <h2 style="font-size:1.6rem">${q.q}</h2>
+                    <div style="display:flex;flex-direction:column;width:100%;gap:12px">
+                        ${q.options.map((opt,i) => `
+                            <button class="quiz-opt" style="text-align:left;padding:14px 24px;border-radius:12px" onclick="submitFinalAnswer(${i},this)">${opt}</button>
+                        `).join('')}
+                    </div>
+                    <div id="final-feedback" style="font-weight:800;font-size:1.2rem;min-height:30px"></div>
+                </div>
+            </div>`;
+    }
+
+    function submitFinalAnswer(index, btn) {
+        const q = FINAL_QUIZ[finalQuizState.current];
+        btn.parentElement.querySelectorAll('button').forEach(b => b.disabled = true);
+        if (index === q.correct) {
+            btn.classList.add('correct');
+            document.getElementById('final-feedback').innerHTML = '<span style="color:#10B981">正解！✓</span>';
+            finalQuizState.score++;
+        } else {
+            btn.classList.add('wrong');
+            document.getElementById('final-feedback').innerHTML = '<span style="color:#EF4444">残念！</span>';
+            finalQuizState.answers.push(finalQuizState.current);
+        }
+        setTimeout(() => {
+            if (finalQuizState.current < FINAL_QUIZ.length - 1) { finalQuizState.current++; renderFinalQuestion(); }
+            else showFinalResults();
+        }, 1000);
+    }
+
+    function showFinalResults() {
+        state.view = 'final-results';
+        document.getElementById('final-quiz').style.display = 'none';
+        const results = document.getElementById('final-results');
+        results.style.display = 'block';
+        const passed = finalQuizState.score >= 12;
+        if (passed && !state.completedLessons.includes('pc-basics')) state.completedLessons.push('pc-basics');
+        saveProgress();
+        results.innerHTML = `<div class="results-container">
+            ${passed ? `
+                <div class="certificate-card anim-bounce">
+                    <span class="material-symbols-outlined" style="font-size:5rem;color:#10B981;margin-bottom:24px">verified</span>
+                    <h2 class="cert-title">おめでとう！🎉 Unit 1 完了！</h2>
+                    <p style="margin-bottom:24px">PC基礎 — Windowsセットアップ修了証</p>
+                    <div class="cert-name">Alba</div>
+                    <div class="cert-info">Score: ${finalQuizState.score} / ${FINAL_QUIZ.length}<br>${new Date().toLocaleDateString()}</div>
+                </div>
+                <button class="btn-continue" style="margin:0 auto" onclick="showDashboard()">ホームに戻る</button>
+            ` : `
+                <h2 style="font-size:2rem;margin-bottom:16px">もう少し！復習してみよう 💪</h2>
+                <p style="font-size:1.2rem;color:var(--text-muted)">Score: ${finalQuizState.score} / ${FINAL_QUIZ.length}</p>
+                <ul class="review-list">${finalQuizState.answers.map(idx => `<li>Slide ${idx+1}: ${SLIDES[idx].title}</li>`).join('')}</ul>
+                <div style="display:flex;gap:16px;justify-content:center;margin-top:32px">
+                    <button class="btn-nav" onclick="startFinalQuiz()">もう一度挑戦する</button>
+                    <button class="btn-continue" onclick="startLearning()">スライドを復習する</button>
+                </div>
+            `}
+        </div>`;
+    }
+
+    window.onload = loadProgress;
+    </script>
 </body>
 </html>
