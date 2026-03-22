@@ -78,19 +78,141 @@
         white-space: nowrap;
     }
 
+
     .sidebar-toggle {
         position: absolute;
-        top: 10px;
-        right: 10px;
-        background: none;
-        border: none;
-        color: white;
+        top: 15px;
+        right: 12px;
+        width: 28px;
+        height: 28px;
+        background: white;
+        border: 2px solid var(--primary);
+        border-radius: 50%;
+        color: var(--primary);
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
         z-index: 101;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        padding: 0;
     }
+    #sidebar.collapsed .sidebar-toggle {
+        right: 12px;
+    }
+
+    /* Sidebar Home Button Styles */
+    .home-link {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 24px;
+        color: var(--white);
+        text-decoration: none;
+        opacity: 0.8;
+        transition: all 0.2s;
+        border-left: 4px solid transparent;
+        margin-bottom: 8px;
+        cursor: pointer;
+    }
+    .home-link:hover { opacity: 1; background: rgba(255,255,255,0.1); }
+    .home-link.active {
+        opacity: 1;
+        background: rgba(255,255,255,0.1);
+        border-left-color: #3B82F6;
+    }
+    .home-info { display: flex; flex-direction: column; }
+    .home-title { font-weight: 600; font-size: 1rem; }
+    .home-subtitle { font-size: 0.7rem; opacity: 0.7; }
+
+    #sidebar.collapsed .home-info { display: none; }
+    #sidebar.collapsed .home-link { justify-content: center; padding: 12px 0; border-left-width: 0; }
+    #sidebar.collapsed .home-link.active { border-left: none; background: rgba(255,255,255,0.2); }
+
+    /* Top Bar Home Button */
+    .top-bar-home {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4px;
+        border-radius: 4px;
+        transition: background 0.2s;
+        position: relative;
+        margin-right: 8px;
+        color: var(--primary);
+    }
+    .top-bar-home:hover { background: rgba(0,0,0,0.05); }
+    .top-bar-home::after {
+        content: "ホームに戻る / Go Home";
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: #333;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        white-space: nowrap;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.2s;
+        z-index: 100;
+        font-family: "Plus Jakarta Sans", sans-serif;
+    }
+    .top-bar-home:hover::after { visibility: visible; opacity: 1; }
+
+    /* Animations */
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+    .shake { animation: shake 0.2s ease-in-out 0s 2; }
+
+    .fade-out { opacity: 0; transition: opacity 0.5s ease; }
+    .fade-in { opacity: 1; transition: opacity 0.5s ease; }
+
+    @keyframes pulse-blue {
+        0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+        70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+    }
+    .pulse-blue {
+        animation: pulse-blue 2s infinite;
+        background-color: #3B82F6 !important;
+        color: white !important;
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+    .modal-content {
+        background: white;
+        padding: 32px;
+        border-radius: 16px;
+        max-width: 400px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        color: #333;
+    }
+    .modal-btns { display: flex; gap: 12px; margin-top: 24px; justify-content: center; }
+    .btn-modal { padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; border: none; font-family: inherit; }
+    .btn-home-confirm { background: #3B82F6; color: white; }
+    .btn-continue-modal { background: #E5E7EB; color: #374151; }
+
+    .quiz-opt.correct { background-color: #10B981 !important; color: white !important; }
+    .quiz-opt.wrong { background-color: #EF4444 !important; color: white !important; }
+
 
     #sidebar.collapsed .logo-en,
     #sidebar.collapsed .logo-jp,
@@ -358,7 +480,7 @@
 <body>
     <aside id="sidebar">
         <button class="sidebar-toggle" onclick="toggleSidebar()">
-            <span class="material-symbols-outlined" id="toggle-icon">arrow_back</span>
+            <span id="toggle-icon">←</span>
         </button>
         <div class="sidebar-header clickable" onclick="showDashboard()">
             <span class="logo-en">Alba's PC Learning</span>
@@ -397,6 +519,7 @@
 
         <section id="slide-view">
             <div class="slide-top-bar">
+                <div class="top-bar-home" onclick="goHome()">🏠</div>
                 <span class="unit-label" id="top-bar-unit"></span>
                 <span class="slide-counter" id="top-bar-counter"></span>
             </div>
@@ -680,7 +803,7 @@
 
         function saveProgress() {
             localStorage.setItem('alba-pc-progress', JSON.stringify(state));
-            updateUI();
+            updateOverallProgress();
         }
 
         function loadProgress() {
@@ -690,9 +813,18 @@
                 state = { ...state, ...loadedState };
             }
 
+            const sidebarSaved = localStorage.getItem('alba-sidebar');
+            if (sidebarSaved !== null) {
+                state.sidebarCollapsed = sidebarSaved === 'true';
+            }
+
             if (state.sidebarCollapsed) {
                 document.getElementById('sidebar').classList.add('collapsed');
-                document.getElementById('toggle-icon').innerText = 'arrow_forward';
+                const icon = document.getElementById('toggle-icon');
+                if (icon) icon.innerText = '→';
+            } else {
+                const icon = document.getElementById('toggle-icon');
+                if (icon) icon.innerText = '←';
             }
 
             if (state.view === 'dashboard') showDashboard();
@@ -715,10 +847,10 @@
 
             if (state.sidebarCollapsed) {
                 sidebar.classList.add('collapsed');
-                icon.innerText = 'arrow_forward';
+                if (icon) icon.innerText = '→';
             } else {
                 sidebar.classList.remove('collapsed');
-                icon.innerText = 'arrow_back';
+                if (icon) icon.innerText = '←';
             }
             localStorage.setItem('alba-sidebar', state.sidebarCollapsed);
         }
@@ -732,7 +864,19 @@
 
         function renderSidebar() {
             const container = document.getElementById('sidebar-nav-container');
-            container.innerHTML = CATEGORIES.map(cat => `
+            const homeActive = state.view === 'dashboard' ? 'active' : '';
+
+            let html = `
+                <div class="home-link ${homeActive}" onclick="goHome()">
+                    <span class="material-symbols-outlined">home</span>
+                    <div class="home-info">
+                        <span class="home-title">Home</span>
+                        <span class="home-subtitle">ホーム</span>
+                    </div>
+                </div>
+            `;
+
+            html += CATEGORIES.map(cat => `
                 <div class="category-item ${cat.id === 'basics' ? 'open' : ''}">
                     <button class="category-header clickable" onclick="toggleCategory(this)">
                         <span class="cat-card-icon" style="font-size: 1.2rem">${cat.icon}</span>
@@ -745,8 +889,9 @@
                     <div class="category-lessons">
                         ${(cat.lessons || []).map(lesson => {
                             const isCompleted = state.completedLessons.includes(lesson.id);
+                            const lessonActive = state.view === 'slide' && lesson.id === 'pc-basics' ? 'active' : '';
                             return `
-                                <a href="#" class="lesson-link ${state.view === 'slide' && state.currentSlide < SLIDES.length && lesson.id === 'pc-basics' ? 'active' : ''} clickable" onclick="startLearning()">
+                                <a href="#" class="lesson-link ${lessonActive} clickable" onclick="startLearning()">
                                     <span class="material-symbols-outlined status-icon ${isCompleted ? 'status-check' : 'status-locked'}">
                                         ${isCompleted ? 'check_circle' : 'lock'}
                                     </span>
@@ -757,6 +902,8 @@
                     </div>
                 </div>
             `).join('');
+
+            container.innerHTML = html;
         }
 
         function toggleCategory(btn) {
@@ -784,8 +931,8 @@
                             <span>${completedCount}/${total} Lessons</span>
                             <span>${percent}%</span>
                         </div>
-                        <div class="progress-bar-bg" style="background: #eee">
-                            <div class="progress-bar-fill" style="width: ${percent}%"></div>
+                        <div class="progress-bar-bg" style="background: #eee;">
+                            <div class="progress-bar-fill" style="width: ${percent}%; background: var(--secondary);"></div>
                         </div>
                         ${!cat.unlocked ? '<span class="badge-locked"><span class="material-symbols-outlined" style="font-size: 0.8rem; vertical-align: middle">lock</span> Coming Soon</span>' : ''}
                     </div>
@@ -811,7 +958,32 @@
             document.getElementById('slide-view').style.display = 'flex';
             document.getElementById('final-results').style.display = 'none';
             document.getElementById('final-quiz').style.display = 'none';
+            renderSlide(state.currentSlide);
+            renderSidebar();
             saveProgress();
+        }
+
+        function goHome() {
+            if (state.view === 'slide') {
+                showHomeConfirmation();
+            } else {
+                showDashboard();
+            }
+        }
+
+        function showHomeConfirmation() {
+            const modal = document.getElementById('home-modal');
+            if (modal) modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('home-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function confirmGoHome() {
+            closeModal();
+            showDashboard();
         }
 
         function showDashboard() {
@@ -820,6 +992,7 @@
             document.getElementById('slide-view').style.display = 'none';
             document.getElementById('final-results').style.display = 'none';
             document.getElementById('final-quiz').style.display = 'none';
+            renderSidebar();
             saveProgress();
         }
 
@@ -846,7 +1019,6 @@
                 quizStrip.classList.remove('hidden');
                 if (!state.quizStatus[index]) state.quizStatus[index] = {};
 
-                // Determine current question to show
                 let currentQIdx = 0;
                 for (let i = 0; i < slide.quiz.questions.length; i++) {
                     if (state.quizStatus[index][i]) currentQIdx = i + 1;
@@ -854,12 +1026,18 @@
                 }
 
                 if (currentQIdx >= slide.quiz.questions.length) {
-                    // All questions completed for this slide
-                    quizBody.innerHTML = '<div class="quiz-item"><p class="quiz-question">このスライドのクイズはすべて完了しました！</p></div>';
+                    quizBody.innerHTML = `
+                        <div class="quiz-item anim-appear">
+                            <p class="quiz-question">このスライドのクイズはすべて完了しました！</p>
+                            <button class="btn-nav clickable btn-primary pulse-blue" onclick="handleNextClick()" style="margin: 16px auto; display: block;">
+                                次のスライドへ →
+                            </button>
+                        </div>
+                    `;
                 } else {
                     const q = slide.quiz.questions[currentQIdx];
                     quizBody.innerHTML = `
-                        <div class="quiz-item anim-appear" id="q-${index}-${currentQIdx}">
+                        <div class="quiz-item fade-in" id="q-${index}-${currentQIdx}">
                             <p class="quiz-question">${q.q}</p>
                             <div class="quiz-options">
                                 ${q.options.map((opt, oIdx) => `
@@ -931,12 +1109,24 @@
                         }
                     }
                     saveProgress();
+
+                    if (quizItem) {
+                        quizItem.classList.remove('fade-in');
+                        quizItem.classList.add('fade-out');
+                        setTimeout(() => {
+                            renderSlide(slideIndex);
+                        }, 500);
+                    } else {
+                        renderSlide(slideIndex);
+                    }
                 }, 1000);
             } else {
                 options[optIndex].classList.add('wrong');
+                if (quizItem) quizItem.classList.add('shake');
                 feedback.innerHTML = '<span style="color: #EF4444">もう一度考えてみよう 💭</span>';
                 setTimeout(() => {
                     options[optIndex].classList.remove('wrong');
+                    if (quizItem) quizItem.classList.remove('shake');
                     feedback.innerHTML = '';
                 }, 1000);
             }
@@ -1095,5 +1285,16 @@
         window.onload = loadProgress;
 
     </script>
+
+    <div id="home-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 16px;">レッスンを中断しますか？<br>Leave lesson?</h2>
+            <p style="color: #666; margin-bottom: 24px;">進捗は保存されます。<br>Progress will be saved.</p>
+            <div class="modal-btns">
+                <button class="btn-modal btn-continue-modal" onclick="closeModal()">続ける / Continue</button>
+                <button class="btn-modal btn-home-confirm" onclick="confirmGoHome()">ホームへ / Go Home</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
