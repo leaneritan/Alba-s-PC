@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alba's PC Learning | アルバのパソコン学習</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0" />
+    <style>
+        :root {
+            --primary: #1E3A5F;
+            --surface: #F8F9FA;
+            --white: #FFFFFF;
+            --teal-quiz: #E1F5EE;
+            --secondary: #2E6CB0;
+            --text-main: #191C1D;
+            --text-muted: #5F6368;
+            --correct: #D1FAE5;
+            --wrong: #FEE2E2;
+            --sidebar-width: 280px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+            cursor: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 3L18 12L7 21V3Z' fill='%231E3A5F' stroke='white' stroke-width='2'/%3E%3C/svg%3E"), auto;
+        }
+
+        button, a, .clickable {
+            cursor: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z' fill='%232E6CB0' stroke='white' stroke-width='2'/%3E%3C/svg%3E"), pointer;
+        }
+
+        body {
+            background-color: var(--surface);
+            color: var(--text-main);
+            overflow-x: hidden;
+            display: flex;
+        }
+
+        #sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background-color: var(--primary);
+            color: var(--white);
+            position: fixed;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .sidebar-header { padding: 32px 24px; }
+        .logo-en { font-weight: 800; font-size: 1.2rem; display: block; }
+        .logo-jp { font-size: 0.8rem; opacity: 0.8; display: block; margin-top: 4px; }
+
+        .sidebar-nav { flex: 1; overflow-y: auto; padding: 0 12px; }
+        .category-item { margin-bottom: 8px; }
+        .category-header {
+            width: 100%;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            background: none;
+            border: none;
+            color: inherit;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        .category-header:hover { background: rgba(255, 255, 255, 0.05); }
+        .category-info { flex: 1; text-align: left; margin-left: 12px; }
+        .cat-title { font-weight: 700; font-size: 0.9rem; display: block; }
+        .cat-subtitle { font-size: 0.7rem; opacity: 0.7; }
+        .chevron { transition: transform 0.2s; font-size: 1.2rem; }
+
+        .category-lessons { margin-top: 4px; padding-left: 40px; display: none; }
+        .category-item.open .category-lessons { display: block; }
+        .category-item.open .chevron { transform: rotate(180deg); }
+
+        .lesson-link {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .lesson-link:hover { color: var(--white); }
+        .lesson-link.active { color: var(--white); border-left: 3px solid var(--secondary); padding-left: 8px; margin-left: -11px; }
+
+        .status-icon { margin-right: 8px; font-size: 1rem; }
+        .status-locked { color: #888; }
+        .status-check { color: #4ADE80; }
+
+        .sidebar-footer { padding: 24px; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+        .progress-label { font-size: 0.75rem; font-weight: 600; margin-bottom: 8px; display: block; }
+        .progress-bar-bg { width: 100%; height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 3px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: var(--secondary); transition: width 0.5s ease; }
+
+        #main-content { margin-left: var(--sidebar-width); flex: 1; min-height: 100vh; display: flex; flex-direction: column; }
+        #dashboard { padding: 48px; max-width: 1200px; margin: 0 auto; width: 100%; }
+        .welcome-header { margin-bottom: 32px; }
+        .welcome-header h1 { font-size: 2.5rem; font-weight: 800; color: var(--primary); }
+        .welcome-header p { font-size: 1.1rem; color: var(--text-muted); margin-top: 8px; }
+
+        .continue-card {
+            background: var(--white); border-radius: 24px; padding: 32px;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 48px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+        .continue-info h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 12px; }
+        .btn-continue {
+            background: var(--secondary); color: var(--white); border: none; padding: 16px 32px;
+            border-radius: 12px; font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;
+            transition: transform 0.2s;
+        }
+        .btn-continue:hover { transform: translateY(-2px); }
+
+        .category-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+        .cat-card {
+            background: var(--white); border-radius: 20px; padding: 24px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); display: flex; flex-direction: column;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .cat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08); }
+        .cat-card.locked { opacity: 0.7; }
+        .cat-card-header { display: flex; align-items: flex-start; margin-bottom: 16px; }
+        .cat-card-icon { font-size: 2.5rem; margin-right: 16px; }
+        .cat-card-titles { flex: 1; }
+        .cat-card-title { font-weight: 800; font-size: 1.2rem; display: block; color: var(--primary); }
+        .cat-card-subtitle { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        .cat-card-footer { margin-top: auto; }
+        .cat-stats { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600; margin-bottom: 8px; }
+        .badge-locked { background: #E5E7EB; color: #6B7280; padding: 4px 12px; border-radius: 100px; font-size: 0.7rem; margin-top: 8px; display: inline-block; }
+
+        #slide-view { display: none; flex: 1; flex-direction: column; height: 100vh; }
+        .slide-top-bar { padding: 16px 48px; display: flex; justify-content: space-between; align-items: center; background: var(--white); border-bottom: 1px solid #eee; }
+        .unit-label { font-size: 0.8rem; font-weight: 700; color: var(--secondary); letter-spacing: 1px; }
+        .slide-counter { font-size: 0.8rem; font-weight: 700; background: #eee; padding: 4px 12px; border-radius: 100px; }
+
+        .slide-main { flex: 1; display: flex; overflow: hidden; }
+        .slide-left { width: 60%; padding: 64px 48px; overflow-y: auto; background: var(--white); }
+        .slide-right { width: 40%; background: #F8F9FA; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px; border-left: 1px solid #eee; }
+        .slide-title { font-size: 2.2rem; font-weight: 800; color: var(--primary); margin-bottom: 8px; }
+        .slide-subtitle { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 32px; }
+        .slide-content { line-height: 1.8; font-size: 1.1rem; }
+        .visual-panel svg { max-width: 100%; max-height: 300px; }
+        .visual-caption { margin-top: 24px; font-size: 0.9rem; color: var(--text-muted); text-align: center; }
+
+        .quiz-strip { height: 180px; background: var(--teal-quiz); padding: 0 48px; display: flex; align-items: center; gap: 24px; border-top: 1px solid rgba(0, 0, 0, 0.05); }
+        .quiz-intro { display: flex; align-items: center; gap: 12px; min-width: 180px; }
+        .quiz-icon { color: var(--primary); font-size: 1.8rem; }
+        .quiz-labels h4 { font-weight: 800; color: var(--primary); }
+        .quiz-labels span { font-size: 0.7rem; opacity: 0.6; }
+        .quiz-body { flex: 1; display: flex; flex-direction: column; justify-content: center; overflow-y: auto; max-height: 100%; }
+        .quiz-question { font-weight: 700; margin-bottom: 12px; }
+        .quiz-options { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+        .quiz-opt { background: var(--white); border: 2px solid transparent; padding: 8px 24px; border-radius: 100px; font-weight: 700; font-size: 0.9rem; transition: all 0.2s; border: 1px solid #ddd; }
+        .quiz-opt:hover { border-color: var(--secondary); }
+        .quiz-opt.correct { background: #D1FAE5; border-color: #10B981; }
+        .quiz-opt.wrong { background: #FEE2E2; border-color: #EF4444; }
+        .quiz-feedback { margin-left: 16px; font-weight: 800; font-size: 1rem; min-width: 150px; }
+
+        .slide-bottom-nav { padding: 24px 48px; display: flex; justify-content: space-between; align-items: center; background: var(--white); border-top: 1px solid #eee; }
+        .btn-nav { background: none; border: 2px solid #eee; padding: 10px 24px; border-radius: 12px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 8px; transition: all 0.2s; }
+        .btn-nav:hover:not(:disabled) { border-color: var(--secondary); color: var(--secondary); }
+        .btn-nav:disabled { opacity: 0.3; }
+        .btn-primary { background: var(--secondary); color: var(--white); border: none; }
+        .btn-primary:hover:not(:disabled) { background: #1E4D8B; }
+        .nav-dots { display: flex; gap: 8px; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; background: #ddd; }
+        .dot.active { background: var(--secondary); width: 24px; border-radius: 4px; }
+
+        .info-box { background: #F0F7FF; padding: 20px; border-radius: 12px; border-left: 4px solid var(--secondary); margin: 20px 0; }
+        .comparison-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.95rem; }
+        .comparison-table th, .comparison-table td { padding: 12px; border: 1px solid #eee; text-align: left; }
+        .comparison-table th { background: #F8F9FA; font-weight: 800; }
+        .folder-tree { background: #fdfdfd; padding: 16px; border-radius: 8px; border: 1px solid #eee; font-family: monospace; font-size: 0.9rem; line-height: 1.6; }
+        .comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+        .grid-item { padding: 16px; border-radius: 12px; border: 1px solid #eee; background: white; }
+        .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px; }
+        .summary-item { padding: 12px; background: #F8F9FA; border-radius: 8px; font-size: 0.9rem; font-weight: 600; }
+        .path-box { background: #333; color: #4ADE80; padding: 16px; border-radius: 8px; font-family: monospace; font-size: 0.85rem; margin-top: 12px; }
+
+        .results-container { text-align: center; max-width: 700px; margin: 64px auto; padding: 64px; background: white; border-radius: 32px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+        .certificate-card { border: 10px solid var(--teal-quiz); padding: 48px; border-radius: 20px; margin-bottom: 32px; position: relative; }
+        .cert-title { font-size: 1.5rem; font-weight: 800; color: var(--primary); margin-bottom: 24px; }
+        .cert-name { font-size: 2.5rem; font-weight: 800; border-bottom: 3px solid var(--primary); display: inline-block; padding: 0 40px 8px; margin-bottom: 24px; }
+        .cert-info { font-size: 1rem; color: var(--text-muted); margin-top: 16px; }
+        .hidden { display: none !important; }
+
+        .review-list { text-align: left; margin: 24px 0; padding-left: 24px; }
+        .review-list li { margin-bottom: 8px; color: var(--secondary); font-weight: 600; }
+    </style>
+</head>
+<body>
+    <aside id="sidebar">
+        <div class="sidebar-header clickable" onclick="showDashboard()">
+            <span class="logo-en">Alba's PC Learning</span>
+            <span class="logo-jp">アルバのパソコン学習</span>
+        </div>
+        <nav class="sidebar-nav" id="sidebar-nav-container"></nav>
+        <div class="sidebar-footer">
+            <span class="progress-label" id="overall-progress-text">Alba's Progress 0%</span>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="overall-progress-fill" style="width: 0%"></div>
+            </div>
+        </div>
+    </aside>
+
+    <main id="main-content">
+        <section id="dashboard">
+            <div class="welcome-header">
+                <h1>Welcome back, Alba!</h1>
+                <p>おかえり、アルバ！</p>
+            </div>
+            <div class="continue-card">
+                <div class="continue-info">
+                    <span class="unit-label" id="continue-unit-label">UNIT 1 · PC BASICS</span>
+                    <h2 id="continue-slide-title">はじめに / Introduction</h2>
+                    <p id="continue-slide-desc">Windowsパソコン基礎ガイドへようこそ！</p>
+                </div>
+                <button class="btn-continue clickable" onclick="startLearning()">
+                    Continue <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+            </div>
+            <div class="category-grid" id="category-grid-container"></div>
+        </section>
+
+        <section id="slide-view">
+            <div class="slide-top-bar">
+                <span class="unit-label" id="top-bar-unit"></span>
+                <span class="slide-counter" id="top-bar-counter"></span>
+            </div>
+            <div class="slide-main">
+                <div class="slide-left">
+                    <h2 class="slide-title" id="current-slide-title"></h2>
+                    <p class="slide-subtitle" id="current-slide-subtitle"></p>
+                    <div class="slide-content" id="current-slide-content"></div>
+                </div>
+                <div class="slide-right">
+                    <div class="visual-panel" id="current-slide-svg"></div>
+                    <p class="visual-caption" id="current-slide-caption"></p>
+                </div>
+            </div>
+            <div class="quiz-strip" id="quiz-strip">
+                <div class="quiz-intro">
+                    <span class="material-symbols-outlined quiz-icon">quiz</span>
+                    <div class="quiz-labels"><h4>確認クイズ</h4><span>Review Quiz</span></div>
+                </div>
+                <div class="quiz-body" id="quiz-body"></div>
+                <div class="quiz-feedback" id="quiz-feedback"></div>
+            </div>
+            <div class="slide-bottom-nav">
+                <button class="btn-nav clickable" id="btn-prev" onclick="goToPrevSlide()">
+                    <span class="material-symbols-outlined">arrow_back</span> 前のスライド
+                </button>
+                <div class="nav-dots" id="nav-dots"></div>
+                <button class="btn-nav clickable btn-primary" id="btn-next" onclick="handleNextClick()">
+                    <span id="next-btn-text">次のスライドへ</span> <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+            </div>
+        </section>
+
+        <section id="final-quiz" style="display: none; padding: 48px;"></section>
+        <section id="final-results" style="display: none;"></section>
+    </main>
+
+    <script>
+        const CATEGORIES = [
+            { id: 'basics', icon: '💻', title: 'Computer Basics', subtitle: 'コンピューター基礎', unlocked: true,
+              lessons: [{ id: 'pc-basics', title: 'PC Basics', subtitle: 'PC基礎', totalSlides: 18, unlocked: true },
+                        { id: 'file-mgmt', title: 'File Management', subtitle: 'ファイル管理', unlocked: false },
+                        { id: 'internet', title: 'Internet Basics', subtitle: 'インターネット基礎', unlocked: false }] },
+            { id: 'cloud', icon: '☁️', title: 'Cloud & Storage', subtitle: 'クラウド & ストレージ', unlocked: false,
+              lessons: [{ id: 'onedrive', title: 'OneDrive', unlocked: false }, { id: 'gdrive', title: 'Google Drive', unlocked: false }, { id: 'backup', title: 'Backup', unlocked: false }] },
+            { id: 'security', icon: '🔒', title: 'Security', subtitle: 'セキュリティ', unlocked: false,
+              lessons: [{ id: 'passwords', title: 'Password Management', unlocked: false }, { id: 'browsing', title: 'Safe Browsing', unlocked: false }, { id: 'phishing', title: 'Phishing', unlocked: false }] },
+            { id: 'uni', icon: '🎓', title: 'University Life', subtitle: '大学生活', unlocked: false,
+              lessons: [{ id: 'word', title: 'Word & OneNote', unlocked: false }, { id: 'writing', title: 'Report Writing', unlocked: false }, { id: 'comm', title: 'Zoom & Teams', unlocked: false }] },
+            { id: 'ai', icon: '🤖', title: 'AI Introduction', subtitle: 'AI入門', unlocked: false,
+              lessons: [{ id: 'what-ai', title: 'What is AI?', unlocked: false }, { id: 'chatgpt', title: 'Using ChatGPT', unlocked: false }, { id: 'claude', title: 'Using Claude', unlocked: false }, { id: 'study-ai', title: 'Studying with AI', unlocked: false }] },
+            { id: 'trouble', icon: '🛠️', title: 'Troubleshooting', subtitle: 'トラブルシューティング', unlocked: false,
+              lessons: [{ id: 'remote', title: 'Remote Support', unlocked: false }, { id: 'common', title: 'Common Problems', unlocked: false }] }
+        ];
+
+        const SLIDES = [
+            {
+                unit: 'UNIT 1 · WINDOWS ACCOUNT', title: 'Windowsパソコン基礎ガイドへようこそ！', subtitle: 'Welcome to the Windows PC Basics Guide',
+                content: `<p>このコースでは、新しいパソコンの基本を一緒に学びます。</p><p>学習内容：</p><ul><li>Windowsアカウントの設定とログイン方法</li><li>ファイルエクスプローラーとフォルダの使い方</li><li>OneDriveクラウドストレージの仕組み</li><li>スマートフォンとの連携方法</li><li>パスワードの安全な管理方法</li><li>リモートサポートの使い方</li></ul>`,
+                svg: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg"><rect x="50" y="50" width="200" height="140" rx="10" fill="#2E6CB0" opacity="0.1"/><rect x="60" y="60" width="180" height="120" rx="5" fill="white" stroke="#2E6CB0" stroke-width="2"/><rect x="130" y="180" width="40" height="20" fill="#2E6CB0"/><rect x="100" y="200" width="100" height="5" rx="2" fill="#2E6CB0"/><rect x="280" y="150" width="60" height="110" rx="10" fill="white" stroke="#2E6CB0" stroke-width="2"/><circle cx="310" cy="245" r="5" fill="#2E6CB0" opacity="0.3"/><path d="M300 50 Q330 40 360 50 T360 90 Q330 100 300 90 T300 50" fill="#2E6CB0" opacity="0.2"/><path d="M150 120 L310 180" stroke="#2E6CB0" stroke-width="2" stroke-dasharray="5,5" opacity="0.5"/><path d="M150 120 L330 70" stroke="#2E6CB0" stroke-width="2" stroke-dasharray="5,5" opacity="0.5"/><path d="M310 180 L330 70" stroke="#2E6CB0" stroke-width="2" stroke-dasharray="5,5" opacity="0.5"/></svg>`,
+                caption: 'PC + phone + cloud connected with arrows', quiz: null, buttonText: '始めましょう →'
+            },
+            {
+                unit: 'UNIT 1 · WINDOWS ACCOUNT', title: 'アカウントとは何か？', subtitle: 'What is a Windows Account?',
+                content: `<p>アカウント＝パソコンの「自分専用スペース」</p><ul><li>あなたの名前・パスワード・ファイル・設定がまとめて保存される</li><li>パソコンを使うとき、まずアカウントにログインする</li><li>複数のアカウントを同じパソコンで使い分けられる</li></ul><div class="info-box"><strong>2種類のアカウント：</strong><br><strong>個人アカウント：</strong>自分で作成、プライベートなファイル用<br><strong>学校アカウント：</strong>大学が提供、学業用ファイル用<br>→ 2つのアカウントのファイルは完全に分離されます</div>`,
+                svg: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg"><circle cx="120" cy="100" r="40" fill="#2E6CB0" opacity="0.2"/><circle cx="120" cy="85" r="15" fill="#2E6CB0"/><path d="M90 135 Q120 115 150 135" stroke="#2E6CB0" stroke-width="10" fill="none" stroke-linecap="round"/><text x="120" y="165" text-anchor="middle" font-size="12" fill="#2E6CB0" font-weight="bold">個人</text><line x1="200" y1="50" x2="200" y2="250" stroke="#ccc" stroke-dasharray="5,5"/><circle cx="280" cy="100" r="40" fill="#28a745" opacity="0.2"/><circle cx="280" cy="85" r="15" fill="#28a745"/><path d="M250 135 Q280 115 310 135" stroke="#28a745" stroke-width="10" fill="none" stroke-linecap="round"/><text x="280" y="165" text-anchor="middle" font-size="12" fill="#28a745" font-weight="bold">学校</text></svg>`,
+                caption: 'Personal and School accounts are separated',
+                quiz: {
+                    questions: [
+                        { id: 's2q1', q: 'Q1: アカウントとは何ですか？', options: [{ text: 'パソコンの「個人スペース」でファイルや設定が保存される', correct: true }, { text: 'インターネットのブラウザのこと', correct: false }, { text: 'パソコンの電源ボタン', correct: false }] },
+                        { id: 's2q2', q: 'Q2: 個人アカウントと学校アカウントのファイルは？', options: [{ text: '自動的に混ざる', correct: false }, { text: '完全に分離されている', correct: true }, { text: '同じフォルダに保存される', correct: false }] }
+                    ]
+                }
+            },
+            {
+                unit: 'UNIT 1 · WINDOWS ACCOUNT', title: '個人用アカウントでのログイン手順', subtitle: 'How to log in with your personal account',
+                content: `<ol><li>1. パソコンの電源ボタンを押す → Windowsのロゴが表示される</li><li>2. ロック画面が表示されたら、クリックまたはキーを押す</li><li>3. Microsoftアカウントのメールアドレスを入力する</li><li>4. パスワードを入力して「Enter」キーを押す</li><li>5. デスクトップ画面が表示されたらログイン完了！</li></ol><p class="mt-4">※ PINコードはパスワードよりも推奨される安全な方法です</p>`,
+                svg: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg"><rect x="80" y="60" width="240" height="180" rx="10" fill="#f0f0f0" stroke="#ccc"/><circle cx="200" cy="110" r="30" fill="#ccc"/><rect x="130" y="155" width="140" height="20" rx="3" fill="white" stroke="#2E6CB0"/><rect x="130" y="185" width="140" height="20" rx="3" fill="white" stroke="#ccc"/><rect x="245" y="188" width="20" height="14" rx="2" fill="#2E6CB0"/><path d="M252 195 L258 195 M256 192 L258 195 L256 198" stroke="white" fill="none"/></svg>`,
+                caption: 'Windows login screen mockup',
+                quiz: {
+                    questions: [
+                        { id: 's3q1', q: 'Q1: サインイン画面で入力を間違えた時、最初に行うべきことは？', options: [{ text: 'もう一度丁寧に入力し直す', correct: true }, { text: 'パソコンを強制終了する', correct: false }, { text: 'キーボードを交換する', correct: false }] },
+                        { id: 's3q2', q: 'Q2: Windowsにログインするために必要なものは？', options: [{ text: 'メールアドレスとパスワード（またはPIN）', correct: true }, { text: 'クレジットカード番号', correct: false }, { text: '電話番号のみ', correct: false }] }
+                    ]
+                }
+            },
+            {
+                unit: 'UNIT 1 · WINDOWS ACCOUNT', title: 'デスクトップの見かた', subtitle: 'Understanding the Windows Desktop',
+                content: `<p>デスクトップの5つの主要エリア：</p><ul><li><strong>デスクトップ：</strong>作業台。ファイルやショートカットを置ける場所</li><li><strong>タスクバー：</strong>画面下部の帯。よく使うアプリが並ぶ</li><li><strong>スタートメニュー：</strong>左下のWindowsマーク。すべてのアプリにアクセス可能</li><li><strong>通知エリア：</strong>右下。時計・音量・Wi-Fi・OneDriveアイコン</li><li><strong>ファイルエクスプローラー：</strong>タスクバーのフォルダアイコン</li></ul>`,
+                svg: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg"><rect x="40" y="40" width="320" height="200" fill="#2E6CB0" opacity="0.1"/><rect x="40" y="240" width="320" height="20" fill="#1E3A5F"/><rect x="45" y="242" width="16" height="16" fill="white" opacity="0.5"/><rect x="300" y="245" width="50" height="10" rx="2" fill="white" opacity="0.3"/><path d="M100 100 L60 60" stroke="#666" stroke-dasharray="3,3"/><text x="105" y="105" font-size="10">デスクトップ</text><path d="M200 240 L200 210" stroke="#666" stroke-dasharray="3,3"/><text x="175" y="205" font-size="10">タスクバー</text></svg>`,
+                caption: 'Annotated Windows desktop diagram',
+                quiz: {
+                    questions: [
+                        { id: 's4q1', q: 'Q1: タスクバーはどこにありますか？', options: [{ text: '画面の左側', correct: false }, { text: '画面の下部', correct: true }, { text: '画面の上部', correct: false }] },
+                        { id: 's4q2', q: 'Q2: スタートメニューを開くにはどうすればいいですか？', options: [{ text: '画面右上をクリック', correct: false }, { text: '左下のWindowsマークをクリック', correct: true }, { text: 'キーボードのF1キーを押す', correct: false }] }
+                    ]
+                }
+            },
+            {
+                unit: 'UNIT 1 · WINDOWS ACCOUNT', title: '学校アカウントを追加する', subtitle: 'Adding your university account to Windows',
+                content: `<p><strong>重要：新しいWindowsユーザーを作る必要はありません！</strong></p><p>同じユーザー内で学校アカウントを追加します。</p><p>手順：</p><ol><li>1. スタートメニュー → 「設定」（歯車アイコン）を開く</li><li>2. 「アカウント」をクリック</li><li>3. 「職場または学校にアクセスする」を選択</li><li>4. 「接続」ボタンをクリック</li><li>5. 大学のメールアドレスを入力</li><li>6. 大学のパスワードを入力して完了</li></ol>`,
+                svg: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg"><rect x="50" y="50" width="300" height="200" rx="5" fill="white" stroke="#ccc"/><rect x="50" y="50" width="80" height="200" fill="#f8f9fa" stroke="#ccc"/><text x="60" y="80" font-size="10" font-weight="bold">設定</text><rect x="55" y="100" width="70" height="15" rx="2" fill="#2E6CB0" opacity="0.1"/><text x="60" y="112" font-size="8">アカウント</text><text x="140" y="80" font-size="12" font-weight="bold">職場または学校にアクセスする</text><rect x="140" y="100" width="60" height="25" rx="3" fill="#2E6CB0"/><text x="153" y="117" font-size="10" fill="white">接続</text></svg>`,
+                caption: 'Windows Settings screen mockup',
+                quiz: {
+                    questions: [
+                        { id: 's5q1', q: 'Q1: 学校アカウントを追加するとき、新しいWindowsユーザーを作る必要は？', options: [{ text: 'はい、必ず作る必要がある', correct: false }, { text: 'いいえ、同じユーザー内で追加できる', correct: true }, { text: '大学のIT部門に依頼する必要がある', correct: false }] },
+                        { id: 's5q2', q: 'Q2: 学校アカウントを追加する設定はどこにありますか？', options: [{ text: '設定 → アカウント → 職場または学校にアクセスする', correct: true }, { text: '設定 → システム → ディスプレイ', correct: false }, { text: 'コントロールパネル → プリンター', correct: false }] }
+                    ]
+                }
+            },
+            {
+                unit: 'UNIT 1 · WINDOWS ACCOUNT', title: '2つのアカウントの違い', subtitle: 'Personal account vs school account comparison',
+                content: `<table class="comparison-table"><thead><tr><th>項目</th><th>個人アカウント</th><th>学校アカウント</th></tr></thead><tbody><tr><td>メール</td><td>yourname@gmail.com等</td><td>s123@university.ac.jp</td></tr><tr><td>OneDrive</td><td>OneDrive - Personal</td><td>OneDrive - 大学名</td></tr><tr><td>保存内容</td><td>個人ファイル・写真</td><td>レポート・課題</td></tr><tr><td>Office</td><td>個人ライセンス</td><td>大学ライセンス</td></tr><tr><td>卒業後</td><td>ずっと使える</td><td>使えなくなる場合がある</td></tr></tbody></table>`,
+                svg: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="150" r="30" fill="#2E6CB0"/><circle cx="300" cy="150" r="30" fill="#28a745"/><text x="100" y="200" text-anchor="middle" font-size="12" font-weight="bold">個人</text><text x="300" y="200" text-anchor="middle" font-size="12" font-weight="bold">学校</text><line x1="200" y1="50" x2="200" y2="250" stroke="#eee" stroke-width="2"/></svg>`,
+                caption: 'Separate paths for personal and school accounts',
+                quiz: {
+                    questions: [
+                        { id: 's6q1', q: 'Q1: 卒業後、学校アカウントはどうなる可能性がありますか？', options: [{ text: '個人アカウントと自動的に合併される', correct: false }, { text: '使えなくなる場合がある', correct: true }, { text: '永遠に使い続けられる', correct: false }] },
+                        { id: 's6q2', q: 'Q2: OneDriveはアカウントによってどう違いますか？', options: [{ text: 'どちらも同じOneDriveフォルダに保存される', correct: false }, { text: '「OneDrive - Personal」と「OneDrive - 大学名」で完全に別々', correct: true }, { text: 'OneDriveは個人アカウントだけが使える', correct: false }] }
+                    ]
+                }
+            },
+            {
+                unit: 'UNIT 1 · WINDOWS ACCOUNT', title: 'ファイルエクスプローラーとは', subtitle: 'Your file manager — navigating your PC',
+                content: `<p>ファイルエクスプローラー＝パソコン内のファイルを見るツール</p><p>4つの主要エリア：</p><ul><li><strong>左側パネル：</strong>よく使う場所へ素早くアクセス</li><li><strong>右側メインエリア：</strong>ファイルとフォルダが表示</li><li><strong>上部アドレスバー：</strong>現在どのフォルダにいるか（パス）</li><li><strong>上部リボン：</strong>コピー・削除・新規作成などの操作</li></ul>`,
+                svg: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg"><rect x="40" y="40" width="320" height="220" rx="5" fill="white" stroke="#ccc"/><rect x="40" y="40" width="320" height="30" fill="#f8f9fa" stroke="#ccc"/><rect x="40" y="70" width="80" height="190" fill="#f8f9fa" stroke="#ccc"/><text x="135" y="58" font-size="8">C: > Users > Alba</text></svg>`,
+                caption: 'Annotated File Explorer window',
+                quiz: {
+                    questions: [
+                        { id: 's7q1', q: 'Q1: ファイルエクスプローラーを開くにはどうすればいいですか？', options: [{ text: 'タスクバーのフォルダアイコンをクリック', correct: true }, { text: 'インターネットブラウザを開く', correct: false }, { text: 'スタートメニューからWordを開く', correct: false }] },
+                        { id: 's7q2', q: 'Q2: ファイルエクスプローラーの左側パネルの役割は？', options: [{ text: 'ファイルの中身を編集する', correct: false }, { text: 'よく使う場所やドライブへ素早くアクセスする', correct: true }, { text: 'インターネットに接続する', correct: false }] }
+                    ]
+                }
+            },
+            {
+                unit: 'UNIT 1 · WINDOWS ACCOUNT', title: 'フォルダの構造を見てみよう', subtitle: 'Understanding the folder hierarchy in File Explorer',
+                content: `<div class="folder-tree">💻 PC（パソコン全体）<br>&nbsp;&nbsp;📁 ドキュメント（ローカル）<br>&nbsp;&nbsp;📁 ダウンロード（ローカル）<br>&nbsp;&nbsp;☁️ OneDrive - Personal　← 個人用クラウド<br>&nbsp;&nbsp;&nbsp;&nbsp;📁 ドキュメント<br>&nbsp;&nbsp;&nbsp;&nbsp;📁 ピクチャ<br>&nbsp;&nbsp;☁️ OneDrive - 大学名　← 学校用クラウド<br>&nbsp;&nbsp;&nbsp;&nbsp;📁 授業資料<br>&nbsp;&nbsp;&nbsp;&nbsp;📁 レポート</div>`,
+                svg: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg"><text x="50" y="50" font-size="12">💻 PC</text><path d="M60 60 L60 220 M60 80 L80 80 M60 120 L80 120 M60 180 L80 180" stroke="#ccc" fill="none"/><text x="90" y="85" font-size="12">📁 ドキュメント</text><text x="90" y="125" font-size="12" fill="#2E6CB0">☁️ OneDrive - Personal</text><text x="90" y="185" font-size="12" fill="#28a745">☁️ OneDrive - 大学名</text></svg>`,
+                caption: 'Folder tree diagram',
+                quiz: {
+                    questions: [
+                        { id: 's8q1', q: 'Q1: ファイルエクスプローラーで学校用OneDriveはどう表示されますか？', options: [{ text: '「OneDrive - 大学名」として表示される', correct: true }, { text: '「マイドキュメント」として表示される', correct: false }, { text: '「Cドライブ」の中に隠れている', correct: false }] },
+                        { id: 's8q2', q: 'Q2: 個人用OneDriveと学校用OneDriveのフォルダは？', options: [{ text: '同じフォルダの中に入っている', correct: false }, { text: 'ファイルエクスプローラーで別々に表示される', correct: true }, { text: 'どちらもデスクトップにある', correct: false }] }
+                    ]
+                }
+            },
+            {
+                unit: 'UNIT 1 · WINDOWS ACCOUNT', title: 'クラウドとは何か？', subtitle: 'Understanding cloud storage',
+                content: `<p>クラウド＝インターネット上の大きなコンピュータ（サーバー）にファイルを保存すること</p><div class="comparison-grid"><div class="grid-item"><strong>PC内（ローカル）：</strong><br>✓ ネット不要<br>✗ そのPCでしか見られない<br>✗ 故障で消失</div><div class="grid-item"><strong>クラウド：</strong><br>✓ どこからでも見られる<br>✓ 故障しても安全<br>✗ ネットが必要</div></div>`,
+                svg: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg"><rect x="50" y="100" width="60" height="40" rx="2" fill="#2E6CB0" opacity="0.2"/><path d="M150 80 Q200 50 250 80 T250 120 Q200 150 150 120 T150 80" fill="#2E6CB0" opacity="0.1"/><rect x="300" y="100" width="30" height="60" rx="5" fill="#2E6CB0" opacity="0.2"/></svg>`,
+                caption: 'File flow between PC, Cloud, and Phone',
+                quiz: {
+                    questions: [
+                        { id: 's9q1', q: 'Q1: クラウドストレージの最大のメリットは？', options: [{ text: 'パソコンが速くなる', correct: false }, { text: 'パソコンが壊れてもファイルが安全に守られる', correct: true }, { text: 'インターネットなしで使える', correct: false }] },
+                        { id: 's9q2', q: 'Q2: クラウドにファイルを保存するために何が必要ですか？', options: [{ text: '特別なUSBメモリ', correct: false }, { text: 'インターネット接続', correct: true }, { text: '外付けハードディスク', correct: false }] }
+                    ]
+                }
+            },
+            {
+                unit: 'UNIT 1 · WINDOWS ACCOUNT', title: 'OneDriveの仕組み', subtitle: 'How OneDrive automatically syncs your files',
+                content: `<p>自動同期の流れ：</p><ol><li>1. OneDriveフォルダに保存</li><li>2. ネット接続時に自動アップロード</li><li>3. 他のデバイス（スマホ等）に自動反映</li><li>4. 常時、全デバイスで最新版が反映</li></ol>`,
+                svg: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg"><circle cx="200" cy="150" r="80" fill="none" stroke="#2E6CB0" stroke-dasharray="5,5" opacity="0.3"/><rect x="185" y="60" width="30" height="20" fill="#2E6CB0" opacity="0.2"/><rect x="100" y="210" width="30" height="20" fill="#2E6CB0" opacity="0.2"/><rect x="270" y="210" width="15" height="30" fill="#2E6CB0" opacity="0.2"/></svg>`,
+                caption: 'Sync cycle between devices',
+                quiz: {
+                    questions: [
+                        { id: 's10q1', q: 'Q1: OneDriveに保存したファイルはいつ同期されますか？', options: [{ text: '毎週月曜日に自動的に', correct: false }, { text: 'インターネットに接続されている時に自動的に', correct: true }, { text: '手動でボタンを押した時だけ', correct: false }] },
+                        { id: 's10q2', q: 'Q2: OneDriveフォルダに保存するにはどうすればいいですか？', options: [{ text: '特別なアップロードボタンを押す', correct: false }, { text: 'OneDriveフォルダに普通のフォルダと同じように保存する', correct: true }, { text: 'メールで送信する', correct: false }] }
+                    ]
+                }
+            },
+            {
+                unit: 'UNIT 1 · WINDOWS ACCOUNT', title: '2つのOneDriveを図で理解する', subtitle: 'Personal OneDrive vs school OneDrive — completely separate',
+                content: `<p>重要：2つのOneDriveのファイルは絶対に混ざりません！</p><div class="info-box-blue"><strong>個人用OneDrive（青）：</strong><br>• パーソナルファイル・写真など<br>• 卒業後もずっと使える</div><div class="info-box-green mt-2"><strong>学校用OneDrive（緑）：</strong><br>• 大学の課題・レポートなど<br>• 卒業後は使えなくなる可能性</div>`,
+                svg: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg"><path d="M170 80 L100 150" stroke="#2E6CB0" stroke-width="2"/><path d="M230 80 L300 150" stroke="#28a745" stroke-width="2"/><circle cx="100" cy="180" r="30" fill="#2E6CB0" opacity="0.2"/><circle cx="300" cy="180" r="30" fill="#28a745" opacity="0.2"/></svg>`,
+                caption: 'Clear separation between Personal and School clouds',
+                quiz: {
+                    questions: [
+                        { id: 's11q1', q: 'Q1: 個人用OneDriveと学校用OneDriveのデータは？', options: [{ text: '夜中に自動的に同期される', correct: false }, { text: '完全に分離されていて混ざることはない', correct: true }, { text: '同じMicrosoftサーバーに混在する', correct: false }] },
+                        { id: 's11q2', q: 'Q2: スマホから学校用OneDriveにアクセスするには？', options: [{ text: 'できない、PCからのみアクセス可能', correct: false }, { text: 'OneDriveアプリで学校アカウントにサインインする', correct: true }, { text: '大学のウェブサイトからのみ可能', correct: false }] }
+                    ]
+                }
+            },
+            {
+                unit: 'UNIT 1 · WINDOWS ACCOUNT', title: 'スマホでOneDriveを使う', subtitle: 'Access your files anywhere with the OneDrive mobile app',
+                content: `<ol><li>1. スマホに「OneDrive」アプリをインストール</li><li>2. 個人のMicrosoftアカウントでサインイン</li><li>3. PCの個人用ファイルが自動表示</li><li>4. 学校アカウントも追加して切替可能</li></ol>`,
+                svg: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg"><rect x="150" y="50" width="100" height="200" rx="15" fill="white" stroke="#333" stroke-width="4"/><rect x="160" y="80" width="80" height="140" fill="#f0f0f0"/><circle cx="175" cy="70" r="8" fill="#2E6CB0"/><circle cx="225" cy="70" r="8" fill="#28a745" opacity="0.3"/></svg>`,
+                caption: 'OneDrive app on mobile with account switcher',
+                quiz: {
+                    questions: [
+                        { id: 's12q1', q: 'Q1: スマホのOneDriveアプリはいくらですか？', options: [{ text: '月額500円', correct: false }, { text: '無料', correct: true }, { text: 'PCを購入した時だけ無料', correct: false }] },
+                        { id: 's12q2', q: 'Q2: スマホで撮った写真をPCでも見るには？', options: [{ text: 'USBケーブルでPCと接続する', correct: false }, { text: 'OneDriveの自動バックアップ機能を使う', correct: true }, { text: 'メールで自分に送る', correct: false }] }
+                    ]
+                }
+            },
+            {
+                unit: 'UNIT 1 · WINDOWS ACCOUNT', title: 'WordとOneNoteでのアカウント切替', subtitle: 'Switching accounts in Office apps',
+                content: `<ul><li><strong>個人アカウント：</strong>OneDrive - Personalに保存</li><li><strong>学校アカウント：</strong>OneDrive - 大学名に保存</li></ul><p>確認方法：Wordの右上にあるアイコンをクリック。または「ファイル」→「アカウント」から。</p>`,
+                svg: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg"><rect x="40" y="60" width="320" height="180" fill="white" stroke="#ccc"/><rect x="40" y="60" width="320" height="30" fill="#2b579a"/><circle cx="340" cy="75" r="10" fill="white" opacity="0.5"/></svg>`,
+                caption: 'Office app account switcher',
+                quiz: {
+                    questions: [
+                        { id: 's13q1', q: 'Q1: Wordで学校アカウントを使って保存すると、どこに保存されますか？', options: [{ text: 'デスクトップに自動保存される', correct: false }, { text: '学校用OneDrive（OneDrive - 大学名）に保存される', correct: true }, { text: '個人用OneDriveに保存される', correct: false }] },
+                        { id: 's13q2', q: 'Q2: Officeアプリでどのアカウントを使っているか確認するには？', options: [{ text: 'ファイルメニューを開いてアカウント情報を確認', correct: true }, { text: 'パソコンを再起動して確認', correct: false }, { text: 'インターネットブラウザで確認', correct: false }] }
+                    ]
+                }
+            },
+            {
+                unit: 'UNIT 1 · WINDOWS ACCOUNT', title: 'ファイルの保存場所を確認する', subtitle: 'How to find out where your file is saved',
+                content: `<ol><li>1. 右クリック → 「プロパティ」</li><li>2. 「場所」の欄を確認</li></ol><div class="path-box">個人：C:\\Users\\Alba\\OneDrive - Personal\\...<br>学校：C:\\Users\\Alba\\OneDrive - 大学名\\...</div>`,
+                svg: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg"><rect x="100" y="60" width="200" height="180" rx="5" fill="white" stroke="#ccc"/><text x="110" y="110" font-size="10" font-weight="bold">場所:</text><rect x="110" y="120" width="180" height="20" fill="#e7f3ff"/><text x="115" y="133" font-size="8">C:\Users\Alba\OneDrive - Personal</text></svg>`,
+                caption: 'File Properties showing location path',
+                quiz: {
+                    questions: [
+                        { id: 's14q1', q: 'Q1: ファイルがどこに保存されているか確認する最も簡単な方法は？', options: [{ text: 'ファイルを右クリック → プロパティ → 場所を確認', correct: true }, { text: 'ファイルを開いて内容を読む', correct: false }, { text: 'インターネットで検索する', correct: false }] },
+                        { id: 's14q2', q: 'Q2: パスに「OneDrive - Personal」とある場合、ファイルはどこにありますか？', options: [{ text: '学校用OneDriveに保存されている', correct: false }, { text: '個人用OneDriveに保存されている', correct: true }, { text: 'USBメモリに保存されている', correct: false }] }
+                    ]
+                }
+            },
+            {
+                unit: 'UNIT 1 · WINDOWS ACCOUNT', title: 'OneDriveのアイコンを理解する', subtitle: 'What the sync status icons mean',
+                content: `<ul><li>✅ <strong>青いチェック：</strong>同期完了。PCとクラウド両方にあり</li><li>🔄 <strong>青い矢印：</strong>同期中（更新中）</li><li>❌ <strong>赤いバツ：</strong>エラー</li><li>☁️ <strong>雲マーク：</strong>クラウドのみ。PCには未保存</li></ul>`,
+                svg: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg"><circle cx="75" cy="60" r="8" fill="#28a745"/><circle cx="75" cy="100" r="8" fill="#f0ad4e"/><circle cx="75" cy="140" r="8" fill="#d9534f"/></svg>`,
+                caption: 'Sync status icons comparison',
+                quiz: {
+                    questions: [
+                        { id: 's15q1', q: 'Q1: ファイルの横に青いチェックマークが表示されている場合、何を意味しますか？', options: [{ text: 'ファイルにエラーがある', correct: false }, { text: '同期が完了してクラウドとPCの両方に最新版がある', correct: true }, { text: 'ファイルがまだアップロード中', correct: false }] },
+                        { id: 's15q2', q: 'Q2: 赤いバツ印のアイコンが表示された時はどうすればいいですか？', options: [{ text: 'すぐにパソコンを捨てる', correct: false }, { text: 'インターネット接続と空き容量を確認する', correct: true }, { text: 'ファイルを削除する', correct: false }] }
+                    ]
+                }
+            },
+            {
+                unit: 'UNIT 1 · WINDOWS ACCOUNT', title: 'パスワードを安全に管理する', subtitle: 'Keeping your accounts secure',
+                content: `<ol><li>1. 個人と学校は別パスワード</li><li>2. 8文字以上、数字・記号含める</li><li>3. 誰にも教えない</li><li>4. <strong>Windows + L</strong> でPCを即ロック</li></ol>`,
+                svg: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg"><rect x="150" y="100" width="100" height="80" rx="10" fill="#eee"/><rect x="170" y="70" width="60" height="50" rx="20" fill="none" stroke="#333" stroke-width="8"/><circle cx="200" cy="140" r="10" fill="#333"/></svg>`,
+                caption: 'Lock and Key for security',
+                quiz: {
+                    questions: [
+                        { id: 's16q1', q: 'Q1: 個人アカウントと学校アカウントのパスワードはどうすべきですか？', options: [{ text: '覚えやすいように同じパスワードにする', correct: false }, { text: 'それぞれ別々のパスワードを使う', correct: true }, { text: 'どちらもパスワードを設定しない', correct: false }] },
+                        { id: 's16q2', q: 'Q2: PCをちょっと離れる時に素早くロックするショートカットは？', options: [{ text: 'Ctrl + Alt + Delete', correct: false }, { text: 'Windowsキー + L', correct: true }, { text: 'Ctrl + S', correct: false }] }
+                    ]
+                }
+            },
+            {
+                unit: 'UNIT 1 · WINDOWS ACCOUNT', title: 'Quick Assistでリモートサポート', subtitle: 'How to get remote help from a trusted person',
+                content: `<p>Quick Assist：Windows標準の無料ツール。 Ctrl + Win + Q で起動。</p><p class="warning">⚠️ 注意：信頼できる家族・友人以外とは絶対に共有しない！</p>`,
+                svg: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg"><rect x="50" y="100" width="80" height="60" fill="#2E6CB0" opacity="0.2"/><rect x="270" y="100" width="80" height="60" fill="#28a745" opacity="0.2"/><text x="180" y="120" font-size="12">123456</text></svg>`,
+                caption: 'Remote help via code exchange',
+                quiz: {
+                    questions: [
+                        { id: 's17q1', q: 'Q1: Quick Assistを開くキーボードショートカットは？', options: [{ text: 'Ctrl + Alt + Delete', correct: false }, { text: 'Ctrl + Win + Q', correct: true }, { text: 'F12キー', correct: false }] },
+                        { id: 's17q2', q: 'Q2: Quick Assistのセッションを共有していい相手は？', options: [{ text: 'インターネットで知り合った人', correct: false }, { text: '信頼できる家族や友人のみ', correct: true }, { text: '誰でもOK', correct: false }] }
+                    ]
+                }
+            },
+            {
+                unit: 'UNIT 1 · WINDOWS ACCOUNT', title: 'まとめ — 今日学んだこと', subtitle: 'Unit 1 Complete! Ready for the final quiz?',
+                content: `<div class="summary-grid"><div class="summary-item">🔑 アカウント：2種類あり</div><div class="summary-item">🖥️ デスクトップ：タスクバー</div><div class="summary-item">📁 フォルダ：2つのOneDrive</div><div class="summary-item">☁️ OneDrive：自動同期</div><div class="summary-item">🔒 セキュリティ：即ロック</div><div class="summary-item">🛠️ サポート：Quick Assist</div></div>`,
+                svg: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg"><circle cx="200" cy="150" r="80" fill="#28a745" opacity="0.1"/><path d="M160 150 L190 180 L250 120" stroke="#28a745" stroke-width="15" fill="none" stroke-linecap="round"/></svg>`,
+                caption: 'Congratulations! Unit 1 Finished.', quiz: null, buttonText: '最終クイズに挑戦！🎯'
+            }
+        ];
+
+        const FINAL_QUIZ = [
+            { q: 'Windowsアカウントとは何ですか？', options: ['パソコンの「個人スペース」', 'インターネットのアドレス', 'パソコンのブランド名'], correct: 0 },
+            { q: 'スタートメニューはどこにありますか？', options: ['画面右上', '画面左下のWindowsマーク', 'キーボードのF1キー'], correct: 1 },
+            { q: '学校アカウントを追加するとき新しいWindowsユーザーは必要ですか？', options: ['はい', 'いいえ', '場合による'], correct: 1 },
+            { q: 'OneDriveのファイルはいつ自動同期されますか？', options: ['手動のみ', 'インターネット接続中に自動的に', '毎朝6時に'], correct: 1 },
+            { q: '個人用と学校用OneDriveのデータは？', options: ['混ざる', '完全に分離されている', '毎週同期される'], correct: 1 },
+            { q: 'ファイルエクスプローラーを開くには？', options: ['タスクバーのフォルダアイコン', 'インターネットブラウザ', 'スタートメニューのWordアイコン'], correct: 0 },
+            { q: 'クラウド保存の最大のメリットは？', options: ['パソコンが速くなる', 'PCが壊れてもファイルが安全', 'インターネット不要'], correct: 1 },
+            { q: 'スマホのOneDriveアプリは？', options: ['有料', '無料', 'PCを買った人だけ無料'], correct: 1 },
+            { q: 'Wordで保存先を確認するには？', options: ['ファイル → アカウント', 'パソコンを再起動', 'ブラウザで確認'], correct: 0 },
+            { q: 'ファイルの保存場所はどこで確認できますか？', options: ['右クリック → プロパティ', 'ファイルを開いて読む', 'インターネット検索'], correct: 0 },
+            { q: '青いチェックマークのOneDriveアイコンの意味は？', options: ['エラー', '同期完了', 'アップロード中'], correct: 1 },
+            { q: 'PCをロックする素早いショートカットは？', options: ['Ctrl + S', 'Windowsキー + L', 'F12'], correct: 1 },
+            { q: 'Quick Assistのショートカットは？', options: ['F12', 'Ctrl + Win + Q', 'Alt + Tab'], correct: 1 },
+            { q: 'Quick Assistは誰と使うべきですか？', options: ['誰でもOK', '信頼できる家族のみ', '大学の先生のみ'], correct: 1 },
+            { q: '卒業後、学校アカウントはどうなりますか？', options: ['個人アカウントと合併', '使えなくなる場合がある', '永遠に使える'], correct: 1 }
+        ];
+
+        let state = {
+            currentSlide: 0,
+            completedSlides: [],
+            completedLessons: [],
+            quizStatus: {}, // slideIdx: { qIdx: true/false }
+            view: 'dashboard'
+        };
+
+        function saveProgress() {
+            localStorage.setItem('alba-pc-progress', JSON.stringify(state));
+            updateUI();
+        }
+
+        function loadProgress() {
+            const saved = localStorage.getItem('alba-pc-progress');
+            if (saved) state = JSON.parse(saved);
+
+            // Restore correct view on load
+            if (state.view === 'dashboard') showDashboard();
+            else if (state.view === 'slide') startLearning();
+            else if (state.view === 'final-quiz') startFinalQuiz();
+            else showDashboard();
+        }
+
+        function updateUI() {
+            renderSidebar();
+            renderDashboard();
+            updateOverallProgress();
+            if (state.view === 'slide') renderSlide(state.currentSlide);
+        }
+
+        function renderSidebar() {
+            const container = document.getElementById('sidebar-nav-container');
+            container.innerHTML = CATEGORIES.map(cat => `
+                <div class="category-item ${cat.id === 'basics' ? 'open' : ''}">
+                    <button class="category-header clickable" onclick="toggleCategory(this)">
+                        <span class="cat-card-icon" style="font-size: 1.2rem">${cat.icon}</span>
+                        <div class="category-info">
+                            <span class="cat-title">${cat.title}</span>
+                            <span class="cat-subtitle">${cat.subtitle}</span>
+                        </div>
+                        <span class="material-symbols-outlined chevron">expand_more</span>
+                    </button>
+                    <div class="category-lessons">
+                        ${(cat.lessons || []).map(lesson => `
+                            <a href="#" class="lesson-link ${state.view === 'slide' && state.currentSlide < 18 && lesson.id === 'pc-basics' ? 'active' : ''} clickable" onclick="startLearning()">
+                                <span class="material-symbols-outlined status-icon ${state.completedLessons.includes(lesson.id) ? 'status-check' : 'status-locked'}">
+                                    ${state.completedLessons.includes(lesson.id) ? 'check_circle' : 'lock'}
+                                </span>
+                                ${lesson.title}
+                            </a>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleCategory(btn) {
+            btn.parentElement.classList.toggle('open');
+        }
+
+        function renderDashboard() {
+            const container = document.getElementById('category-grid-container');
+            container.innerHTML = CATEGORIES.map(cat => {
+                const total = cat.lessons ? cat.lessons.length : 0;
+                const completedCount = cat.lessons ? cat.lessons.filter(l => state.completedLessons.includes(l.id)).length : 0;
+                const percent = total > 0 ? Math.round((completedCount / total) * 100) : 0;
+
+                return `
+                <div class="cat-card ${cat.unlocked ? '' : 'locked'} clickable" onclick="${cat.unlocked ? 'startLearning()' : ''}">
+                    <div class="cat-card-header">
+                        <span class="cat-card-icon">${cat.icon}</span>
+                        <div class="cat-card-titles">
+                            <span class="cat-card-title">${cat.title}</span>
+                            <span class="cat-card-subtitle">${cat.subtitle}</span>
+                        </div>
+                    </div>
+                    <div class="cat-card-footer">
+                        <div class="cat-stats">
+                            <span>${completedCount}/${total} Lessons</span>
+                            <span>${percent}%</span>
+                        </div>
+                        <div class="progress-bar-bg" style="background: #eee">
+                            <div class="progress-bar-fill" style="width: ${percent}%"></div>
+                        </div>
+                        ${!cat.unlocked ? '<span class="badge-locked"><span class="material-symbols-outlined" style="font-size: 0.8rem; vertical-align: middle">lock</span> Coming Soon</span>' : ''}
+                    </div>
+                </div>
+            `}).join('');
+
+            const lastSlide = SLIDES[state.currentSlide];
+            document.getElementById('continue-slide-title').innerText = lastSlide.title;
+            document.getElementById('continue-slide-desc').innerText = lastSlide.subtitle;
+        }
+
+        function updateOverallProgress() {
+            const total = 18;
+            const completed = state.completedSlides.length;
+            const percent = Math.round((completed / total) * 100);
+            document.getElementById('overall-progress-text').innerText = `Alba's Progress ${percent}%`;
+            document.getElementById('overall-progress-fill').style.width = `${percent}%`;
+        }
+
+        function startLearning() {
+            state.view = 'slide';
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('slide-view').style.display = 'flex';
+            document.getElementById('final-results').style.display = 'none';
+            document.getElementById('final-quiz').style.display = 'none';
+            saveProgress();
+        }
+
+        function showDashboard() {
+            state.view = 'dashboard';
+            document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('slide-view').style.display = 'none';
+            document.getElementById('final-results').style.display = 'none';
+            document.getElementById('final-quiz').style.display = 'none';
+            saveProgress();
+        }
+
+        function renderSlide(index) {
+            const slide = SLIDES[index];
+            document.getElementById('top-bar-unit').innerText = slide.unit;
+            document.getElementById('top-bar-counter').innerText = `SLIDE ${index + 1} / ${SLIDES.length}`;
+            document.getElementById('current-slide-title').innerText = slide.title;
+            document.getElementById('current-slide-subtitle').innerText = slide.subtitle;
+            document.getElementById('current-slide-content').innerHTML = slide.content;
+            document.getElementById('current-slide-svg').innerHTML = slide.svg;
+            document.getElementById('current-slide-caption').innerText = slide.caption;
+
+            const quizStrip = document.getElementById('quiz-strip');
+            const quizBody = document.getElementById('quiz-body');
+            const feedback = document.getElementById('quiz-feedback');
+            feedback.innerHTML = '';
+
+            if (slide.quiz) {
+                quizStrip.classList.remove('hidden');
+                if (!state.quizStatus[index]) state.quizStatus[index] = {};
+
+                quizBody.innerHTML = slide.quiz.questions.map((q, qIdx) => `
+                    <div class="quiz-item" id="q-${index}-${qIdx}">
+                        <p class="quiz-question" style="font-size: 0.9rem; margin-bottom: 8px;">${q.q}</p>
+                        <div class="quiz-options">
+                            ${q.options.map((opt, oIdx) => `
+                                <button class="quiz-opt clickable ${state.quizStatus[index][qIdx] && opt.correct ? 'correct' : ''}"
+                                        onclick="checkAnswer(${index}, ${qIdx}, ${oIdx}, ${opt.correct})">
+                                    ${opt.text}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                quizStrip.classList.add('hidden');
+            }
+
+            updateNavButtons(index);
+            renderDots();
+        }
+
+        function updateNavButtons(index) {
+            const slide = SLIDES[index];
+            document.getElementById('btn-prev').disabled = index === 0;
+            const isSlideCompleted = checkSlideCompletion(index);
+            const nextBtnText = document.getElementById('next-btn-text');
+            const nextBtn = document.getElementById('btn-next');
+
+            if (index === SLIDES.length - 1) {
+                nextBtnText.innerText = slide.buttonText || '最終クイズへ';
+                nextBtn.disabled = !isSlideCompleted && slide.quiz;
+            } else {
+                nextBtnText.innerText = slide.buttonText || '次のスライドへ';
+                if (!slide.quiz || index === 0) {
+                    nextBtn.disabled = false;
+                } else {
+                    nextBtn.disabled = !isSlideCompleted;
+                }
+            }
+        }
+
+        function checkSlideCompletion(index) {
+            const slide = SLIDES[index];
+            if (!slide.quiz) return true;
+            const status = state.quizStatus[index] || {};
+            return slide.quiz.questions.every((_, qIdx) => status[qIdx] === true);
+        }
+
+        function checkAnswer(slideIndex, qIndex, optIndex, isCorrect) {
+            const quizItem = document.getElementById(`q-${slideIndex}-${qIndex}`);
+            const options = quizItem.querySelectorAll('.quiz-opt');
+            const feedback = document.getElementById('quiz-feedback');
+
+            options.forEach(opt => opt.classList.remove('correct', 'wrong'));
+
+            if (isCorrect) {
+                options[optIndex].classList.add('correct');
+                feedback.innerHTML = '<span class="feedback-correct">正解！✓</span>';
+                state.quizStatus[slideIndex][qIndex] = true;
+
+                if (checkSlideCompletion(slideIndex)) {
+                    if (!state.completedSlides.includes(slideIndex)) {
+                        state.completedSlides.push(slideIndex);
+                    }
+                    updateNavButtons(slideIndex);
+                }
+                saveProgress();
+            } else {
+                options[optIndex].classList.add('wrong');
+                feedback.innerHTML = '<span class="feedback-wrong">もう一度考えてみよう</span>';
+            }
+        }
+
+        function handleNextClick() {
+            if (state.currentSlide === SLIDES.length - 1) {
+                startFinalQuiz();
+            } else {
+                goToNextSlide();
+            }
+        }
+
+        function goToNextSlide() {
+            if (state.currentSlide < SLIDES.length - 1) {
+                state.currentSlide++;
+                renderSlide(state.currentSlide);
+                saveProgress();
+            }
+        }
+
+        function goToPrevSlide() {
+            if (state.currentSlide > 0) {
+                state.currentSlide--;
+                renderSlide(state.currentSlide);
+                saveProgress();
+            }
+        }
+
+        function renderDots() {
+            const container = document.getElementById('nav-dots');
+            container.innerHTML = SLIDES.map((_, i) => `
+                <div class="dot ${i === state.currentSlide ? 'active' : ''}"></div>
+            `).join('');
+        }
+
+        let finalQuizState = { current: 0, score: 0, answers: [] };
+
+        function startFinalQuiz() {
+            state.view = 'final-quiz';
+            document.getElementById('slide-view').style.display = 'none';
+            const quizSection = document.getElementById('final-quiz');
+            quizSection.style.display = 'block';
+            finalQuizState = { current: 0, score: 0, answers: [] };
+            renderFinalQuestion();
+            saveProgress();
+        }
+
+        function renderFinalQuestion() {
+            const q = FINAL_QUIZ[finalQuizState.current];
+            const container = document.getElementById('final-quiz');
+            container.innerHTML = `
+                <div class="welcome-header">
+                    <h1>最終確認クイズ</h1>
+                    <p>Final Comprehension Quiz - Unit 1: Windowsアカウント</p>
+                </div>
+                <div class="continue-card" style="flex-direction: column; align-items: flex-start; gap: 24px;">
+                    <span class="unit-label">QUESTION ${finalQuizState.current + 1} / ${FINAL_QUIZ.length}</span>
+                    <h2 style="font-size: 1.8rem;">${q.q}</h2>
+                    <div class="quiz-options" style="flex-direction: column; width: 100%; gap: 12px;">
+                        ${q.options.map((opt, i) => `
+                            <button class="quiz-opt clickable" style="text-align: left; padding: 16px 24px; border-radius: 12px;" onclick="submitFinalAnswer(${i})">${opt}</button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function submitFinalAnswer(index) {
+            const q = FINAL_QUIZ[finalQuizState.current];
+            if (index === q.correct) finalQuizState.score++;
+            else finalQuizState.answers.push(finalQuizState.current);
+
+            if (finalQuizState.current < FINAL_QUIZ.length - 1) {
+                finalQuizState.current++;
+                renderFinalQuestion();
+            } else {
+                showFinalResults();
+            }
+        }
+
+        function showFinalResults() {
+            state.view = 'final-results';
+            document.getElementById('final-quiz').style.display = 'none';
+            const results = document.getElementById('final-results');
+            results.style.display = 'block';
+
+            const passed = finalQuizState.score >= 12;
+            if (passed) {
+                if (!state.completedLessons.includes('pc-basics')) state.completedLessons.push('pc-basics');
+            }
+            saveProgress();
+
+            results.innerHTML = `
+                <div class="results-container">
+                    ${passed ? `
+                        <div class="certificate-card">
+                            <span class="material-symbols-outlined" style="font-size: 5rem; color: #10B981; margin-bottom: 24px;">verified</span>
+                            <h2 class="cert-title">おめでとう！🎉 Unit 1 完了！</h2>
+                            <p style="margin-bottom: 24px;">PC基礎 — Windowsアカウントコース修了証</p>
+                            <div class="cert-name">Alba</div>
+                            <div class="cert-info">Score: ${finalQuizState.score} / ${FINAL_QUIZ.length}<br>${new Date().toLocaleDateString()}</div>
+                        </div>
+                        <button class="btn-continue clickable" style="margin: 0 auto;" onclick="showDashboard()">ホームに戻る</button>
+                    ` : `
+                        <h2 style="font-size: 2rem; margin-bottom: 16px;">もう少し！復習してみよう 💪</h2>
+                        <p style="font-size: 1.2rem; color: var(--text-muted);">Score: ${finalQuizState.score} / ${FINAL_QUIZ.length}</p>
+                        <ul class="review-list">
+                            ${finalQuizState.answers.map(idx => `<li>Slide ${idx + 1}: ${SLIDES[idx].title}</li>`).join('')}
+                        </ul>
+                        <div style="display: flex; gap: 16px; justify-content: center;">
+                            <button class="btn-nav clickable" onclick="startFinalQuiz()">もう一度挑戦する</button>
+                            <button class="btn-continue clickable" onclick="startLearning()">スライドを復習する</button>
+                        </div>
+                    `}
+                </div>
+            `;
+        }
+
+        window.onload = loadProgress;
+    </script>
+</body>
+</html>
